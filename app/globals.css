@@ -3,6 +3,14 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+* {
+  font-family: inherit; 
+}
+
+@theme {
+  --color-neon-cyan: #06b6d4;
+  --color-glass-bg: rgba(255, 255, 255, 0.05);
+}
 /* Globals.css */
 @layer base {
   ::selection {
