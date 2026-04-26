@@ -1,6 +1,8 @@
 import Hero from "@/components/home/Hero";
 import Features from "@/components/home/Features";
-import Integration from "@/components/home/Integration"; // <-- Tambah ini
+import Integration from "@/components/home/Integration";
+import Pricing from "@/components/home/Pricing";
+import Stats from "@/components/home/Stats";// <-- Tambah ini
 import Footer from "@/components/layout/Footer";         // <-- Tambah ini
 
 export default function Home() {
@@ -20,6 +22,8 @@ export default function Home() {
         <Hero />
         <Features />
         <Integration /> {/* <-- Pasang di sini */}
+        <Pricing />
+        <Stats /> {/* <-- Pasang di sini */}
       </div>
       
       <Footer /> {/* <-- Pasang di sini sebagai penutup */}

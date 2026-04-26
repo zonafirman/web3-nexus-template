@@ -3,6 +3,7 @@
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import { motion, useScroll, useSpring } from "framer-motion";
+import { Toaster } from 'sonner';
 
 export default function RootLayout({
   children,
@@ -29,6 +30,7 @@ export default function RootLayout({
 
         <Navbar />
         <main>{children}</main>
+        <Toaster position="bottom-right" richColors theme="dark" />
       </body>
     </html>
   );
