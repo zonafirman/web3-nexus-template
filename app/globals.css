@@ -4,6 +4,18 @@
 
 @custom-variant dark (&:is(.dark *));
 @theme {
+  /* Mengatur Font Utama */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  
+  /* Mengatur Font Monospace (Terminal & Kode) */
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Warna Tema Kustom Kita */
+  --color-neon-cyan: #06b6d4;
+  --color-glass-bg: rgba(255, 255, 255, 0.05);
+}
+
+@theme {
   --color-neon-cyan: #06b6d4;
   --color-glass-bg: rgba(255, 255, 255, 0.05);
   --color-glass-border: rgba(255, 255, 255, 0.1);

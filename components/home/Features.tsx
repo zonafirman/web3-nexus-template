@@ -1,54 +1,87 @@
 "use client";
 
 import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Fingerprint, Zap, Blocks, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { Fingerprint, Zap, Blocks, ShieldCheck, Cpu, Network } from 'lucide-react';
 
-// Komponen Kartu Individual dengan Logika Spotlight
-const BentoCard = ({ children, className, colSpan }: { children: React.ReactNode, className?: string, colSpan: string }) => {
-  const divRef = useRef<HTMLDivElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
+// --- Komponen Kartu 3D Kelas Atas ---
+const TiltBentoCard = ({ children, className, colSpan }: { children: React.ReactNode, className?: string, colSpan: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Posisi Mouse untuk Spotlight
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Fisika untuk Kemiringan 3D
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springConfig = { damping: 20, stiffness: 150, mass: 0.5 };
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [7, -7]), springConfig);
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-7, 7]), springConfig);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!divRef.current || isFocused) return;
-    const rect = divRef.current.getBoundingClientRect();
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseXPos = e.clientX - rect.left;
+    const mouseYPos = e.clientY - rect.top;
+
+    // Update Spotlight
+    mouseX.set(mouseXPos);
+    mouseY.set(mouseYPos);
+
+    // Update 3D Tilt (nilai dari -0.5 sampai 0.5)
+    const xPct = mouseXPos / width - 0.5;
+    const yPct = mouseYPos / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
   };
 
-  const handleFocus = () => setIsFocused(true);
-  const handleBlur = () => setIsFocused(false);
-  const handleMouseEnter = () => setOpacity(1);
-  const handleMouseLeave = () => setOpacity(0);
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    // Kembalikan kartu ke posisi datar secara perlahan
+    x.set(0);
+    y.set(0);
+  };
 
   return (
-    <motion.div
-      ref={divRef}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      onMouseMove={handleMouseMove}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={`relative overflow-hidden rounded-3xl bg-zinc-900/40 border border-white/10 backdrop-blur-md transition-colors hover:border-cyan-500/30 ${colSpan} ${className}`}
-    >
-      {/* Spotlight Effect */}
-      <div
-        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
+    <div className={`relative ${colSpan} perspective-1000`} style={{ perspective: "1000px" }}>
+      <motion.div
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         style={{
-          opacity,
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(6,182,212,.1), transparent 40%)`,
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
         }}
-      />
-      
-      {/* Content Container */}
-      <div className="relative z-10 h-full p-8 flex flex-col">
-        {children}
-      </div>
-    </motion.div>
+        className={`relative h-full w-full rounded-3xl bg-zinc-900/40 border border-white/10 backdrop-blur-md transition-colors duration-300 ${isHovered ? 'border-cyan-500/30' : ''} ${className}`}
+      >
+        {/* Spotlight Overlay */}
+        <motion.div
+          className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition-opacity duration-300"
+          animate={{ opacity: isHovered ? 1 : 0 }}
+          style={{
+            background: useTransform(
+              [mouseX, mouseY],
+              ([x, y]) => `radial-gradient(600px circle at ${x}px ${y}px, rgba(6,182,212,0.15), transparent 40%)`
+            ),
+          }}
+        />
+
+        {/* Kontainer Elemen (translateZ menciptakan efek melayang 3D) */}
+        <div 
+          className="relative z-10 h-full p-8 flex flex-col"
+          style={{ transform: "translateZ(40px)" }}
+        >
+          {children}
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
@@ -57,6 +90,7 @@ const Features = () => {
     <section className="py-24 relative z-10">
       <div className="max-w-7xl mx-auto px-6">
         
+        {/* Header Features */}
         <div className="mb-16 max-w-2xl">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
@@ -65,7 +99,7 @@ const Features = () => {
             className="flex items-center gap-2 mb-4"
           >
             <ShieldCheck size={20} className="text-cyan-500" />
-            <span className="text-cyan-500 font-semibold tracking-wider uppercase text-sm">Enterprise Grade</span>
+            <span className="text-cyan-500 font-semibold tracking-wider uppercase text-sm">Open Source Core</span>
           </motion.div>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -77,19 +111,25 @@ const Features = () => {
           </motion.h2>
         </div>
 
-        {/* Bento Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[320px]">
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[340px]">
           
-          {/* Card 1: Account Abstraction (Wide) */}
-          <BentoCard colSpan="md:col-span-2" className="group">
+          {/* Card 1: Account Abstraction */}
+          <TiltBentoCard colSpan="md:col-span-2" className="group">
             <div className="flex justify-between items-start mb-auto">
-              <div className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center shadow-inner">
+              <div className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-500">
                 <Fingerprint size={28} className="text-cyan-400" />
               </div>
-              {/* Mini UI Mockup */}
-              <div className="hidden sm:flex flex-col gap-2 p-3 bg-zinc-950/50 rounded-xl border border-white/5 opacity-80 group-hover:opacity-100 transition-opacity">
+              
+              {/* Efek 3D Pop-out UI Mockup */}
+              <div 
+                className="hidden sm:flex flex-col gap-2 p-3 bg-zinc-950/80 rounded-xl border border-white/10 shadow-2xl transition-all duration-500 opacity-50 group-hover:opacity-100"
+                style={{ transform: "translateZ(30px)" }} // Melompat ke depan
+              >
                 <div className="h-2 w-24 bg-zinc-800 rounded-full"></div>
-                <div className="h-8 w-32 bg-cyan-500/20 border border-cyan-500/30 rounded-lg flex items-center justify-center text-[10px] font-bold text-cyan-400">G-MAIL LOGIN DETECTED</div>
+                <div className="h-8 w-32 bg-cyan-500/20 border border-cyan-500/30 rounded-lg flex items-center justify-center text-[10px] font-bold text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                  SOCIAL LOGIN READY
+                </div>
               </div>
             </div>
             <div className="mt-8">
@@ -98,51 +138,56 @@ const Features = () => {
                 Native Account Abstraction components built-in. Let users sign in with Email, Google, or Passkeys. Seed phrases are now optional.
               </p>
             </div>
-          </BentoCard>
+          </TiltBentoCard>
 
-          {/* Card 2: Performance (Square) */}
-          <BentoCard colSpan="md:col-span-1" className="group">
+          {/* Card 2: Performance */}
+          <TiltBentoCard colSpan="md:col-span-1" className="group">
              <div className="flex justify-between items-start mb-auto">
-              <div className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center group-hover:rotate-12 transition-transform duration-500">
                 <Zap size={28} className="text-yellow-400" />
               </div>
-              <ArrowUpRight size={24} className="text-zinc-600 group-hover:text-cyan-400 transition-colors" />
             </div>
-            <div className="mt-8">
-              {/* Fake Lighthouse Score */}
-              <div className="flex items-end gap-2 mb-2">
-                <span className="text-5xl font-black text-white">99</span>
-                <span className="text-emerald-400 font-bold mb-1">+ Performance</span>
+            <div className="mt-8 relative">
+              {/* Fake Lighthouse Graph */}
+              <div className="absolute right-0 top-0 w-16 h-16 border-4 border-emerald-500/20 rounded-full border-t-emerald-500 group-hover:animate-spin"></div>
+              
+              <div className="flex items-end gap-2 mb-2 relative z-10" style={{ transform: "translateZ(20px)" }}>
+                <span className="text-6xl font-black text-white tracking-tighter">99</span>
+                <span className="text-emerald-400 font-bold mb-2">+ Score</span>
               </div>
               <p className="text-zinc-400 leading-relaxed text-sm">
-                Next.js App Router and React Server Components ensure lightning-fast load times.
+                Next.js App Router ensures lightning-fast load times.
               </p>
             </div>
-          </BentoCard>
+          </TiltBentoCard>
 
-          {/* Card 3: Viem & Wagmi (Wide Bottom) */}
-          <BentoCard colSpan="md:col-span-3" className="group flex-row items-center overflow-visible">
+          {/* Card 3: Viem & Wagmi */}
+          <TiltBentoCard colSpan="md:col-span-3" className="group flex-row items-center overflow-visible">
             <div className="flex-1 pr-8 z-10">
-              <div className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center mb-6 group-hover:-translate-y-2 transition-transform duration-500">
                 <Blocks size={28} className="text-blue-400" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-3">Pre-Configured Web3 Hooks</h3>
-              <p className="text-zinc-400 leading-relaxed max-w-lg">
-                Built on top of Viem and Wagmi. Stop wrestling with RPC endpoints and provider setups. The entire logic skeleton is ready to connect to your smart contracts.
+              <p className="text-zinc-400 leading-relaxed max-w-xl">
+                Built on top of Viem and Wagmi. Stop wrestling with RPC endpoints and provider setups. The entire logic skeleton is ready to connect to your smart contracts instantly.
               </p>
             </div>
-            {/* Abstract Tech Graphic */}
-            <div className="hidden lg:flex flex-1 h-full items-center justify-end opacity-50 group-hover:opacity-100 transition-opacity duration-500 relative">
-              <div className="absolute right-10 w-48 h-48 bg-blue-500/20 blur-3xl rounded-full"></div>
-              <div className="grid grid-cols-3 gap-4 rotate-12 scale-110 relative z-10 pointer-events-none">
-                {[...Array(9)].map((_, i) => (
-                  <div key={i} className={`w-16 h-16 rounded-xl border border-white/10 bg-zinc-900/80 flex items-center justify-center ${i === 4 ? 'border-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.5)]' : ''}`}>
-                    {i === 4 && <div className="w-4 h-4 bg-cyan-400 rounded-full animate-pulse"></div>}
-                  </div>
-                ))}
+            
+            {/* Visualisasi Node Network 3D */}
+            <div 
+              className="hidden lg:flex flex-1 h-full items-center justify-end opacity-40 group-hover:opacity-100 transition-opacity duration-700 relative"
+              style={{ transform: "translateZ(50px)" }} // Paling menonjol keluar
+            >
+              <div className="absolute right-12 w-48 h-48 bg-blue-500/20 blur-3xl rounded-full"></div>
+              <div className="relative z-10 flex items-center justify-center gap-6">
+                <div className="p-4 rounded-2xl bg-zinc-900 border border-white/10 shadow-xl"><Cpu size={24} className="text-zinc-400" /></div>
+                <div className="w-16 h-px bg-gradient-to-r from-zinc-700 to-cyan-500 relative">
+                  <div className="absolute top-1/2 -translate-y-1/2 left-0 w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
+                </div>
+                <div className="p-5 rounded-2xl bg-zinc-950 border border-cyan-500/50 shadow-[0_0_20px_rgba(6,182,212,0.3)]"><Network size={32} className="text-cyan-400" /></div>
               </div>
             </div>
-          </BentoCard>
+          </TiltBentoCard>
 
         </div>
       </div>
