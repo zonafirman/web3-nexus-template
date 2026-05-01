@@ -1,10 +1,13 @@
 "use client";
 
 import React from 'react';
-import ComponentPreview from '../ComponentPreview';
-import SwapCard from '../../dashboard/SwapCard';
+import ComponentPreview from '@/components/docs/ComponentPreview';
+import SwapCard from '@/components/dashboard/SwapCard';
 
-const codeString = `"use client";
+// ==========================================
+// 1. DATA STATIS & KODE SUMBER
+// ==========================================
+const SWAP_CARD_CODE = `"use client";
 import React, { useState } from 'react';
 import { ArrowDown, Info, Settings2, Zap } from 'lucide-react';
 
@@ -17,11 +20,17 @@ const SwapCard = () => {
     </div>
   );
 };
+
 export default SwapCard;`;
 
+// ==========================================
+// 2. KOMPONEN UTAMA
+// ==========================================
 export default function SwapDocs() {
   return (
     <div className="pt-10 pb-20">
+      
+      {/* HEADER SECTION */}
       <div className="mb-12">
         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">
           Swap Interface
@@ -33,6 +42,7 @@ export default function SwapDocs() {
 
       <hr className="border-white/5 mb-16" />
 
+      {/* COMPONENT PREVIEW */}
       <ComponentPreview 
         title="DEX Swap Card"
         description="Ketik angka di kolom 'You Sell' dan perhatikan bagaimana nilai 'You Get' terkalkulasi secara otomatis dengan efek antarmuka premium."
@@ -43,8 +53,9 @@ export default function SwapDocs() {
             <SwapCard />
           </div>
         }
-        code={codeString}
+        code={SWAP_CARD_CODE}
       />
+      
     </div>
   );
 }

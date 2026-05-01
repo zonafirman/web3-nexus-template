@@ -5,15 +5,16 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, Sparkles, Terminal, Copy, Check, ExternalLink, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
-const Hero = () => {
-  const [isCopied, setIsCopied] = useState(false);
-  const [typedCode, setTypedCode] = useState("");
-  
-  // Link Toko Pro 
-  const STORE_LINK = "https://yourstore.gumroad.com/l/nexus-ui-pro";
-  const CLONE_COMMAND = "npx create-next-app -e https://github.com/zonafirman/web3-nexus-template";
+// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+import { fadeUpItem, fadeIn, popIn3D, blinkCursor } from '@/lib/animations';
 
-  const fullCode = `import { nexusUI } from '@nexus-ui/core';
+// ==========================================
+// 1. DATA STATIS & KONFIGURASI
+// ==========================================
+const STORE_LINK = "https://yourstore.gumroad.com/l/nexus-ui-pro";
+const CLONE_COMMAND = "npx create-next-app -e https://github.com/zonafirman/web3-nexus-template";
+
+const FULL_CODE = `import { nexusUI } from '@nexus-ui/core';
 
 // 2026 Web3 Config Standard
 export const config = nexusUI.create({
@@ -26,20 +27,39 @@ export const config = nexusUI.create({
   security: 'enterprise-grade'
 });`;
 
-  // Efek Mengetik
+// --- Helper: Syntax Highlighting Engine ---
+const highlightSyntax = (line: string) => {
+  return {
+    __html: line
+      .replace(/import|from|export const/g, '<span class="text-[#ff7b72] drop-shadow-[0_0_8px_rgba(255,123,114,0.4)]">$&</span>')
+      .replace(/'@nexus-ui\/core'|'dark-neon'|'account-abstraction'|'ai-intent-engine'|'security-audit-live'|'enterprise-grade'/g, '<span class="text-[#a5d6ff]">$&</span>')
+      .replace(/create|theme|features|security/g, '<span class="text-[#d2a8ff] drop-shadow-[0_0_8px_rgba(210,168,255,0.4)]">$&</span>')
+      .replace(/\/\/.*$/g, '<span class="text-[#8b949e] italic">$&</span>')
+  };
+};
+
+// ==========================================
+// 2. KOMPONEN UTAMA HERO
+// ==========================================
+const Hero = () => {
+  const [isCopied, setIsCopied] = useState(false);
+  const [typedCode, setTypedCode] = useState("");
+  
+  // --- Efek Mengetik (Typewriter) ---
   useEffect(() => {
     let i = 0;
     const typingInterval = setInterval(() => {
-      if (i < fullCode.length) {
-        setTypedCode(fullCode.slice(0, i + 1));
+      if (i < FULL_CODE.length) {
+        setTypedCode(FULL_CODE.slice(0, i + 1));
         i++;
       } else {
         clearInterval(typingInterval);
       }
     }, 30);
     return () => clearInterval(typingInterval);
-  }, [fullCode]);
+  }, []);
 
+  // --- Handler Tombol Clone ---
   const handleClone = () => {
     navigator.clipboard.writeText(CLONE_COMMAND);
     setIsCopied(true);
@@ -50,32 +70,30 @@ export const config = nexusUI.create({
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  // --- FISIKA 3D UNTUK KOTAK IDE ---
+  // --- Fisika 3D Untuk Kotak IDE ---
   const ideRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
   const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
   
-  // Transformasi kemiringan (Tilt)
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [10, -10]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-10, 10]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!ideRef.current) return;
     const rect = ideRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    x.set(mouseX / width - 0.5);
-    y.set(mouseY / height - 0.5);
+    x.set((e.clientX - rect.left) / rect.width - 0.5);
+    y.set((e.clientY - rect.top) / rect.height - 0.5);
   };
 
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const handleMouseLeave = () => { x.set(0); y.set(0); };
+
+  // --- Ekstraksi Kelas CSS Tailwind ---
+  const cloneBtnBase = "flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.15)] border";
+  const cloneBtnState = isCopied 
+    ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]" 
+    : "bg-white text-zinc-950 border-white hover:bg-zinc-200 hover:scale-105";
 
   return (
     <section className="relative min-h-[95vh] flex items-center justify-center pt-32 pb-20 overflow-hidden">
@@ -89,8 +107,7 @@ export const config = nexusUI.create({
         <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left z-10">
           
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={fadeUpItem} custom={0} initial="hidden" animate="visible"
             className="group flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/5 border border-cyan-500/20 mb-8 hover:bg-cyan-500/10 transition-colors cursor-default backdrop-blur-md"
           >
             <Sparkles size={16} className="text-cyan-400 group-hover:animate-spin" />
@@ -98,9 +115,7 @@ export const config = nexusUI.create({
           </motion.div>
 
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            variants={fadeUpItem} custom={0.1} initial="hidden" animate="visible"
             className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6 leading-[0.9]"
           >
             Web3 UI <br />
@@ -110,41 +125,24 @@ export const config = nexusUI.create({
           </motion.h1>
 
           <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            variants={fadeUpItem} custom={0.2} initial="hidden" animate="visible"
             className="text-lg md:text-xl text-zinc-400 max-w-xl mb-10 leading-relaxed font-medium"
           >
             The world's most advanced Web3 starter kit. Built with Next.js 15, Tailwind v4, and the future of Account Abstraction.
           </motion.p>
 
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            variants={fadeUpItem} custom={0.3} initial="hidden" animate="visible"
             className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-8"
           >
-            {/* Action 1: Clone Repo (Lite) */}
-            <button 
-              onClick={handleClone}
-              className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.15)] border ${
-                isCopied 
-                ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]' 
-                : 'bg-white text-zinc-950 border-white hover:bg-zinc-200 hover:scale-105'
-              }`}
-            >
-              {isCopied ? (
-                <><Check size={18} /> Copied!</>
-              ) : (
-                <><Terminal size={18} /> Clone Repository</>
-              )}
+            {/* Action 1: Clone Repo */}
+            <button onClick={handleClone} className={`${cloneBtnBase} ${cloneBtnState}`}>
+              {isCopied ? <><Check size={18} /> Copied!</> : <><Terminal size={18} /> Clone Repository</>}
             </button>
 
-            {/* Action 2: Upgrade to Pro (Commercial) */}
+            {/* Action 2: Upgrade to Pro */}
             <a 
-              href={STORE_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={STORE_LINK} target="_blank" rel="noopener noreferrer"
               className="group flex items-center justify-center gap-3 px-8 py-4 bg-zinc-900 border border-white/10 text-white font-bold rounded-2xl transition-all hover:border-cyan-500/50 hover:bg-zinc-800 shadow-2xl relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -159,11 +157,9 @@ export const config = nexusUI.create({
             </a>
           </motion.div>
 
-          {/* SOCIAL PROOF (Marketing Booster) */}
+          {/* SOCIAL PROOF */}
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            variants={fadeIn} custom={0.6} initial="hidden" animate="visible"
             className="flex items-center gap-4 flex-col sm:flex-row text-center sm:text-left"
           >
             <div className="flex -space-x-3">
@@ -184,12 +180,9 @@ export const config = nexusUI.create({
 
         {/* KOLOM KANAN: Interactive 3D IDE Mockup */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4, type: "spring" }}
+          variants={popIn3D} custom={0.4} initial="hidden" animate="visible"
           className="flex-1 w-full max-w-lg lg:max-w-full relative perspective-1000"
         >
-          {/* Pembungkus 3D yang membaca posisi Mouse */}
           <motion.div 
             ref={ideRef}
             onMouseMove={handleMouseMove}
@@ -197,7 +190,6 @@ export const config = nexusUI.create({
             style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
             className="relative z-10 w-full rounded-3xl bg-[#0d1117]/90 border border-white/10 backdrop-blur-2xl shadow-[0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden group hover:border-cyan-500/40 transition-colors duration-500"
           >
-            
             {/* MacOS Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-black/40" style={{ transform: "translateZ(10px)" }}>
               <div className="flex items-center gap-2">
@@ -216,18 +208,11 @@ export const config = nexusUI.create({
                   {typedCode.split('\n').map((line, i) => (
                     <div key={i} className="flex hover:bg-white/5 rounded px-2 -mx-2 transition-colors">
                       <span className="w-8 text-zinc-700 select-none">{i + 1}</span>
-                      <span className="text-zinc-300" dangerouslySetInnerHTML={{ 
-                        __html: line
-                          .replace(/import|from|export const/g, '<span class="text-[#ff7b72] drop-shadow-[0_0_8px_rgba(255,123,114,0.4)]">$&</span>')
-                          .replace(/'@nexus-ui\/core'|'dark-neon'|'account-abstraction'|'ai-intent-engine'|'security-audit-live'|'enterprise-grade'/g, '<span class="text-[#a5d6ff]">$&</span>')
-                          .replace(/create|theme|features|security/g, '<span class="text-[#d2a8ff] drop-shadow-[0_0_8px_rgba(210,168,255,0.4)]">$&</span>')
-                          .replace(/\/\/.*$/g, '<span class="text-[#8b949e] italic">$&</span>')
-                      }} />
+                      <span className="text-zinc-300" dangerouslySetInnerHTML={highlightSyntax(line)} />
                     </div>
                   ))}
                   <motion.span 
-                    animate={{ opacity: [1, 0] }} 
-                    transition={{ repeat: Infinity, duration: 0.8 }}
+                    variants={blinkCursor} animate="animate"
                     className="inline-block w-2.5 h-4 bg-cyan-400 ml-1 align-middle shadow-[0_0_10px_#06b6d4]"
                   />
                 </code>

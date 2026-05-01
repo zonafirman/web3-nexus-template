@@ -2,8 +2,8 @@ import Hero from "@/components/home/Hero";
 import Features from "@/components/home/Features";
 import Integration from "@/components/home/Integration";
 import Pricing from "@/components/home/Pricing";
-import Stats from "@/components/home/Stats";// <-- Tambah ini
-import Footer from "@/components/layout/Footer";         // <-- Tambah ini
+import Stats from "@/components/home/Stats";
+import Footer from "@/components/layout/Footer";
 
 export default function Home() {
   return (
@@ -21,12 +21,12 @@ export default function Home() {
       <div className="relative z-10 flex flex-col w-full">
         <Hero />
         <Features />
-        <Integration /> {/* <-- Pasang di sini */}
+        <Integration />
         <Pricing />
-        <Stats /> {/* <-- Pasang di sini */}
+        <Stats />
       </div>
       
-      <Footer /> {/* <-- Pasang di sini sebagai penutup */}
+      <Footer />
 
     </div>
   );

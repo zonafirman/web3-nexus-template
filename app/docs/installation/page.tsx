@@ -5,7 +5,32 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Package, FileText, Play, ArrowRight, Copy, CheckCircle2, DownloadCloud } from 'lucide-react';
 import Link from 'next/link';
 
-// --- Helper: Block Kode Copy-Paste ---
+// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+import { fadeUp, fadeUpItem, tabSlideUp } from '@/lib/animations';
+
+// ==========================================
+// 1. DATA STATIS & KONFIGURASI
+// ==========================================
+const PACKAGE_MANAGERS = ['npm', 'yarn', 'pnpm', 'bun'] as const;
+
+const INSTALL_COMMANDS = {
+  npm: "npm install",
+  yarn: "yarn install",
+  pnpm: "pnpm install",
+  bun: "bun install"
+};
+
+const RUN_COMMANDS = {
+  npm: "npm run dev",
+  yarn: "yarn dev",
+  pnpm: "pnpm dev",
+  bun: "bun dev"
+};
+
+// ==========================================
+// 2. HELPER COMPONENTS (SUB-COMPONENTS)
+// ==========================================
+
 const CodeBlock = ({ code, title }: { code: string, title?: string }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -29,8 +54,7 @@ const CodeBlock = ({ code, title }: { code: string, title?: string }) => {
       )}
       <button 
         onClick={handleCopy}
-        className="absolute top-3 right-3 p-2 bg-white/5 hover:bg-white/10 rounded-lg text-zinc-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-        title="Copy code"
+        className="absolute top-3 right-3 p-2 bg-white/5 hover:bg-white/10 rounded-lg text-zinc-400 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 z-10"
       >
         {isCopied ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Copy size={16} />}
       </button>
@@ -41,7 +65,6 @@ const CodeBlock = ({ code, title }: { code: string, title?: string }) => {
   );
 };
 
-// --- Helper: Step Indicator ---
 const StepIndicator = ({ number, title, icon: Icon, children }: { number: number, title: string, icon: React.ElementType, children: React.ReactNode }) => (
   <div className="relative pl-10 md:pl-16 pb-12 border-l border-white/10 last:border-transparent last:pb-0">
     <div className="absolute top-0 left-0 -translate-x-1/2 w-10 h-10 rounded-full bg-zinc-950 border-2 border-cyan-500/50 flex items-center justify-center text-cyan-400 font-black text-lg shadow-[0_0_15px_rgba(6,182,212,0.3)]">
@@ -59,33 +82,18 @@ const StepIndicator = ({ number, title, icon: Icon, children }: { number: number
   </div>
 );
 
+// ==========================================
+// 3. MAIN PAGE COMPONENT
+// ==========================================
 export default function InstallationDocs() {
-  const [activeTab, setActiveTab] = useState<'npm' | 'yarn' | 'pnpm' | 'bun'>('npm');
-
-  const installCommands = {
-    npm: "npm install",
-    yarn: "yarn install",
-    pnpm: "pnpm install",
-    bun: "bun install"
-  };
-
-  const runCommands = {
-    npm: "npm run dev",
-    yarn: "yarn dev",
-    pnpm: "pnpm dev",
-    bun: "bun dev"
-  };
+  const [activeTab, setActiveTab] = useState<typeof PACKAGE_MANAGERS[number]>('npm');
 
   return (
     <div className="pt-10 pb-20">
       <div className="max-w-4xl relative z-10">
         
-        {/* Header Docs */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-16"
-        >
+        {/* HEADER SECTION */}
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" className="mb-16">
           <h1 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tighter">
             Installation
           </h1>
@@ -94,11 +102,9 @@ export default function InstallationDocs() {
           </p>
         </motion.div>
 
-        {/* System Requirements */}
+        {/* SYSTEM REQUIREMENTS */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          variants={fadeUpItem} custom={0.1} initial="hidden" animate="visible"
           className="mb-16 p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20"
         >
           <h4 className="font-bold text-white mb-3 flex items-center gap-2">
@@ -111,11 +117,9 @@ export default function InstallationDocs() {
           </ul>
         </motion.div>
 
-        {/* Setup Steps */}
+        {/* SETUP STEPS */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          variants={fadeUpItem} custom={0.2} initial="hidden" animate="visible"
           className="ml-4 md:ml-8"
         >
           {/* STEP 1 */}
@@ -132,12 +136,11 @@ export default function InstallationDocs() {
 
           {/* STEP 2 */}
           <StepIndicator number={2} title="Install Dependencies" icon={Package}>
-            <p>Pilih <em>package manager</em> favorit Anda untuk menginstal dependensi yang dibutuhkan (seperti Framer Motion, Lucide, Zustand, dan Viem).</p>
+            <p>Pilih <em>package manager</em> favorit Anda untuk menginstal dependensi yang dibutuhkan.</p>
             
-            {/* Tabs for Package Managers */}
             <div className="mt-4">
               <div className="flex gap-2 mb-2">
-                {(['npm', 'yarn', 'pnpm', 'bun'] as const).map((pm) => (
+                {PACKAGE_MANAGERS.map((pm) => (
                   <button
                     key={pm}
                     onClick={() => setActiveTab(pm)}
@@ -154,12 +157,9 @@ export default function InstallationDocs() {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  transition={{ duration: 0.15 }}
+                  variants={tabSlideUp} initial="hidden" animate="visible" exit="exit"
                 >
-                  <CodeBlock title="Terminal" code={installCommands[activeTab]} />
+                  <CodeBlock title="Terminal" code={INSTALL_COMMANDS[activeTab]} />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -168,13 +168,10 @@ export default function InstallationDocs() {
           {/* STEP 3 */}
           <StepIndicator number={3} title="Environment Variables" icon={FileText}>
             <p>
-              Karena ini adalah aplikasi Web3, Anda memerlukan ID Proyek untuk WalletConnect atau RPC Keys (misal: Alchemy/Infura). 
+              Karena ini adalah aplikasi Web3, Anda memerlukan ID Proyek untuk WalletConnect atau RPC Keys. 
               Salin file <code>.env.example</code> menjadi <code>.env.local</code>.
             </p>
-            <CodeBlock 
-              title="Terminal"
-              code={`cp .env.example .env.local`} 
-            />
+            <CodeBlock title="Terminal" code={`cp .env.example .env.local`} />
             <p className="mt-4">Buka <code>.env.local</code> dan isi variabel berikut:</p>
             <CodeBlock 
               title=".env.local"
@@ -188,33 +185,23 @@ export default function InstallationDocs() {
           {/* STEP 4 */}
           <StepIndicator number={4} title="Run Development Server" icon={Play}>
             <p>Anda sudah siap! Jalankan server pengembangan lokal untuk melihat hasil akhirnya.</p>
-            <CodeBlock 
-              title="Terminal"
-              code={runCommands[activeTab]} 
-            />
+            <CodeBlock title="Terminal" code={RUN_COMMANDS[activeTab]} />
             <p>
-              Buka <a href="http://localhost:3000" className="text-cyan-400 hover:underline">http://localhost:3000</a> di browser Anda untuk melihat hasilnya. Anda bisa mulai mengedit <code>app/page.tsx</code> dan melihat pembaruan secara instan.
+              Buka <a href="http://localhost:3000" className="text-cyan-400 hover:underline">http://localhost:3000</a> di browser Anda untuk melihat hasilnya.
             </p>
           </StepIndicator>
-
         </motion.div>
 
-        {/* Bottom Navigation */}
+        {/* BOTTOM NAVIGATION */}
         <div className="mt-20 pt-8 border-t border-white/10 flex justify-between items-center">
-          <Link 
-            href="/docs" 
-            className="group flex flex-col gap-1 text-zinc-500 hover:text-white transition-colors"
-          >
+          <Link href="/docs" className="group flex flex-col gap-1 text-zinc-500 hover:text-white transition-colors">
             <span className="text-xs uppercase tracking-wider font-bold">Previous</span>
             <span className="flex items-center gap-2 font-medium">
               <ArrowRight size={16} className="rotate-180" /> Introduction
             </span>
           </Link>
           
-          <Link 
-            href="/docs/config" 
-            className="group flex flex-col items-end gap-1 text-cyan-500 hover:text-cyan-400 transition-colors text-right"
-          >
+          <Link href="/docs/config" className="group flex flex-col items-end gap-1 text-cyan-500 hover:text-cyan-400 transition-colors text-right">
             <span className="text-xs uppercase tracking-wider font-bold text-zinc-500">Next Step</span>
             <span className="flex items-center gap-2 font-medium">
               Configuration <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

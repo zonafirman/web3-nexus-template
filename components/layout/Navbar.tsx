@@ -11,44 +11,46 @@ import Link from 'next/link';
 import AuthModal from '@/components/web3/AuthModal';
 import { useWeb3Store } from '@/store/useWeb3Store';
 
+// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+import { navbarIsland, dropdownBlur, mobileMenu, slideInItem, inlineExpand } from '@/lib/animations';
+
+const NAV_LINKS = [
+  { name: 'Features', href: '/#features' },
+  { name: 'Dashboard', href: '/dashboard', isLive: true },
+  { name: 'Docs', href: '/docs' },
+];
+
 const Navbar = () => {
+  // --- States ---
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false); // Mobile Menu State
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Desktop Wallet Dropdown
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   
-  // State untuk Fitur AI
+  // AI States
   const [aiInput, setAiInput] = useState('');
   const [isAiDropdownOpen, setIsAiDropdownOpen] = useState(false);
   const [isAiProcessing, setIsAiProcessing] = useState(false);
   
+  // --- Refs & Hooks ---
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const aiRef = useRef<HTMLDivElement>(null); // Ref untuk AI Dropdown Desktop
+  const aiRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-
-  // STORE ZUSTAND
   const { isConnected, address, balance, disconnect } = useWeb3Store();
 
-  // Handle Scroll & Click Outside Dropdown
+  // --- Effects ---
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     const handleClickOutside = (event: MouseEvent) => {
-      // Tutup dropdown dompet jika diklik di luar
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-      // Tutup dropdown AI Desktop jika diklik di luar
-      if (aiRef.current && !aiRef.current.contains(event.target as Node)) {
-        setIsAiDropdownOpen(false);
-      }
+      const target = event.target as Node;
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) setIsDropdownOpen(false);
+      if (aiRef.current && !aiRef.current.contains(target)) setIsAiDropdownOpen(false);
     };
 
     window.addEventListener('scroll', handleScroll);
     document.addEventListener('mousedown', handleClickOutside);
-    
-    if (isOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'unset';
+    document.body.style.overflow = isOpen ? 'hidden' : 'unset';
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -59,7 +61,7 @@ const Navbar = () => {
 
   if (pathname?.startsWith('/dashboard')) return null;
 
-  // Fitur Salin Alamat Dompet
+  // --- Handlers ---
   const handleCopyAddress = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (address) {
@@ -75,7 +77,6 @@ const Navbar = () => {
     setIsOpen(false);
   };
 
-  // Simulasi Proses AI saat pengguna mengetik (Bisa dipakai Desktop & Mobile)
   const handleAiInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setAiInput(value);
@@ -89,39 +90,45 @@ const Navbar = () => {
     }
   };
 
-  const navLinks = [
-    { name: 'Features', href: '/#features' },
-    { name: 'Dashboard', href: '/dashboard', isLive: true },
-    { name: 'Docs', href: '/docs' },
-  ];
+  const closeAllMenus = () => {
+    setIsOpen(false);
+    setIsDropdownOpen(false);
+    setIsAiDropdownOpen(false);
+    setAiInput('');
+  };
+
+  // --- Dynamic CSS Classes ---
+  const glassContainerClass = isScrolled || isOpen || isAiDropdownOpen
+    ? "bg-zinc-950/80 backdrop-blur-2xl border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]" 
+    : "bg-zinc-900/40 backdrop-blur-lg border-white/5 shadow-xl";
+
+  const aiInputClass = `flex items-center gap-2 px-4 py-1.5 bg-zinc-950/50 rounded-full border border-white/5 w-full group overflow-hidden focus-within:border-cyan-500/50 transition-colors relative z-20`;
 
   return (
     <>
-      {/* Floating Dynamic Island Navbar */}
+      {/* ================================================= */}
+      {/* DYNAMIC ISLAND NAVBAR (DESKTOP) */}
+      {/* ================================================= */}
       <motion.div
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        variants={navbarIsland}
+        initial="hidden"
+        animate="visible"
         className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] w-[95%] max-w-5xl"
       >
-        <div className={`transition-all duration-500 rounded-full border ${
-          isScrolled || isOpen || isAiDropdownOpen
-            ? "bg-zinc-950/80 backdrop-blur-2xl border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]" 
-            : "bg-zinc-900/40 backdrop-blur-lg border-white/5 shadow-xl"
-        }`}>
+        <div className={`transition-all duration-500 rounded-full border ${glassContainerClass}`}>
           <div className="flex justify-between items-center px-4 py-3">
             
-            {/* Logo */}
-            <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3 pl-2 group relative z-[70]">
+            {/* BRAND LOGO */}
+            <Link href="/" onClick={closeAllMenus} className="flex items-center gap-3 pl-2 group relative z-[70]">
               <div className="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.5)] group-hover:rotate-12 transition-transform">
                 <div className="w-3 h-3 bg-zinc-950 rounded-sm rotate-45"></div>
               </div>
               <span className="text-lg font-bold tracking-tight text-white hidden sm:block">NEXUS</span>
             </Link>
 
-            {/* AI Command Center Desktop */}
+            {/* AI COMMAND CENTER (DESKTOP) */}
             <div className="hidden md:flex flex-1 max-w-sm mx-8 relative" ref={aiRef}>
-              <div className="flex items-center gap-2 px-4 py-1.5 bg-zinc-950/50 rounded-full border border-white/5 w-full group overflow-hidden focus-within:border-cyan-500/50 transition-colors relative z-20">
+              <div className={aiInputClass}>
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-cyan-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                 <Sparkles size={14} className={isAiDropdownOpen ? "text-cyan-400" : "text-cyan-500"} />
                 <input 
@@ -136,13 +143,13 @@ const Navbar = () => {
                 </button>
               </div>
 
-              {/* Dropdown Hasil AI Desktop */}
               <AnimatePresence>
                 {isAiDropdownOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10, filter: "blur(5px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: 10, filter: "blur(5px)" }}
+                    variants={dropdownBlur}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
                     className="absolute top-full left-0 right-0 mt-3 bg-zinc-950/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden z-10"
                   >
                     <div className="p-4">
@@ -169,7 +176,7 @@ const Navbar = () => {
                             <span>Slippage: <span className="text-white">0.1%</span></span>
                           </div>
                           <button 
-                            onClick={() => { setAiInput(''); setIsAiDropdownOpen(false); }}
+                            onClick={closeAllMenus}
                             className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-sm rounded-xl transition-all active:scale-95 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
                           >
                             Prepare Transaction
@@ -182,10 +189,10 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
-            {/* Desktop Menu & Wallet */}
+            {/* DESKTOP MENU & WALLET */}
             <div className="hidden lg:flex items-center gap-6 pr-2">
               <div className="flex items-center gap-6 text-sm font-semibold text-zinc-400">
-                {navLinks.map((link) => (
+                {NAV_LINKS.map((link) => (
                   <Link key={link.name} href={link.href} className="flex items-center gap-1.5 hover:text-white transition-colors relative">
                     {link.name}
                     {link.isLive && (
@@ -197,22 +204,35 @@ const Navbar = () => {
                   </Link>
                 ))}
               </div>
+              
               <div className="h-4 w-px bg-white/10"></div>
+              
               {isConnected ? (
-                // Connected Desktop
+                // WALLET CONNECTED DROPDOWN
                 <div className="relative" ref={dropdownRef}>
-                  <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className={`flex items-center gap-2 px-2 py-1.5 bg-zinc-900 border rounded-full transition-all hover:bg-zinc-800 active:scale-95 ${isDropdownOpen ? 'border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-white/10'}`}>
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 p-[1px]"><div className="w-full h-full bg-zinc-950 rounded-full border border-zinc-900"></div></div>
+                  <button 
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+                    className={`flex items-center gap-2 px-2 py-1.5 bg-zinc-900 border rounded-full transition-all hover:bg-zinc-800 active:scale-95 ${isDropdownOpen ? 'border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'border-white/10'}`}
+                  >
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-500 p-[1px]">
+                      <div className="w-full h-full bg-zinc-950 rounded-full border border-zinc-900"></div>
+                    </div>
                     <span className="text-sm font-bold text-white pl-1">{balance}</span>
                     <span className="text-xs font-mono text-zinc-400 bg-white/5 px-2 py-1 rounded-full flex items-center gap-1">
                       {address ? `${address.slice(0, 5)}...${address.slice(-4)}` : ''}
                       <ChevronDown size={14} className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                     </span>
                   </button>
-                  {/* ... Dropdown Desktop (Tetap sama seperti sebelumnya) ... */}
+
                   <AnimatePresence>
                     {isDropdownOpen && (
-                      <motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }} className="absolute top-full right-0 mt-4 w-72 bg-zinc-950/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] overflow-hidden z-50">
+                      <motion.div 
+                        variants={dropdownBlur} 
+                        initial="hidden" 
+                        animate="visible" 
+                        exit="exit" 
+                        className="absolute top-full right-0 mt-4 w-72 bg-zinc-950/95 backdrop-blur-xl border border-white/10 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.7)] overflow-hidden z-50"
+                      >
                         <div className="p-5 border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Connected Wallet</span>
@@ -223,14 +243,16 @@ const Navbar = () => {
                           <div className="flex items-center justify-between bg-zinc-900/80 p-3 rounded-2xl border border-white/5 group hover:border-cyan-500/30 transition-colors">
                             <span className="font-mono text-sm text-zinc-300">{address ? `${address.slice(0, 8)}....${address.slice(-6)}` : ''}</span>
                             <div className="flex gap-1">
-                              <button onClick={handleCopyAddress} className="p-1.5 text-zinc-500 hover:text-white bg-white/5 rounded-lg transition-colors">{isCopied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}</button>
+                              <button onClick={handleCopyAddress} className="p-1.5 text-zinc-500 hover:text-white bg-white/5 rounded-lg transition-colors">
+                                {isCopied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                              </button>
                               <a href="#" className="p-1.5 text-zinc-500 hover:text-white bg-white/5 rounded-lg transition-colors"><ExternalLink size={14} /></a>
                             </div>
                           </div>
                         </div>
                         <div className="p-2">
-                          <Link href="/dashboard" onClick={() => setIsDropdownOpen(false)} className="w-full flex items-center gap-3 p-3 text-sm font-semibold text-zinc-300 hover:text-white hover:bg-white/5 rounded-2xl transition-colors"><Activity size={18} className="text-cyan-500" /> View Portfolio</Link>
-                          <Link href="/dashboard/settings" onClick={() => setIsDropdownOpen(false)} className="w-full flex items-center gap-3 p-3 text-sm font-semibold text-zinc-300 hover:text-white hover:bg-white/5 rounded-2xl transition-colors"><Settings size={18} className="text-zinc-500" /> Preferences</Link>
+                          <Link href="/dashboard" onClick={closeAllMenus} className="w-full flex items-center gap-3 p-3 text-sm font-semibold text-zinc-300 hover:text-white hover:bg-white/5 rounded-2xl transition-colors"><Activity size={18} className="text-cyan-500" /> View Portfolio</Link>
+                          <Link href="/dashboard/settings" onClick={closeAllMenus} className="w-full flex items-center gap-3 p-3 text-sm font-semibold text-zinc-300 hover:text-white hover:bg-white/5 rounded-2xl transition-colors"><Settings size={18} className="text-zinc-500" /> Preferences</Link>
                         </div>
                         <div className="p-2 border-t border-white/5 bg-red-500/5">
                           <button onClick={handleDisconnect} className="w-full flex items-center justify-center gap-2 p-3 text-sm font-bold text-red-500 hover:bg-red-500/10 rounded-2xl transition-colors"><LogOut size={16} /> Disconnect Session</button>
@@ -246,34 +268,32 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile Menu Icon Toggle */}
+            {/* MOBILE MENU TOGGLE */}
             <button 
               onClick={() => setIsOpen(!isOpen)}
               className="lg:hidden p-2 text-zinc-300 hover:text-white transition-colors relative z-[70] bg-white/5 border border-white/10 rounded-full"
             >
               {isOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
+
           </div>
         </div>
       </motion.div>
 
-      {/* FULL SCREEN MOBILE MENU OVERLAY */}
+      {/* ================================================= */}
+      {/* FULLSCREEN MOBILE OVERLAY */}
+      {/* ================================================= */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
-            transition={{ type: "spring", stiffness: 120, damping: 20 }}
+            variants={mobileMenu}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             className="fixed inset-0 z-50 bg-zinc-950/95 backdrop-blur-3xl pt-28 px-6 flex flex-col lg:hidden overflow-y-auto"
           >
             {/* AI Command Center Mobile */}
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mb-8 relative z-20"
-            >
+            <motion.div variants={slideInItem} custom={0.1} initial="hidden" animate="visible" className="mb-8 relative z-20">
               <div className="flex items-center gap-3 p-3 bg-zinc-900/60 border border-white/10 rounded-2xl shadow-inner focus-within:border-cyan-500/50 transition-colors">
                 <Sparkles size={18} className={isAiDropdownOpen ? "text-cyan-400" : "text-cyan-500 ml-1"} />
                 <input 
@@ -288,15 +308,9 @@ const Navbar = () => {
                 </button>
               </div>
 
-              {/* Hasil AI Mobile (Animasi Inline Expand) */}
               <AnimatePresence>
                 {isAiDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                    animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
-                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                    className="overflow-hidden"
-                  >
+                  <motion.div variants={inlineExpand} initial="hidden" animate="visible" exit="exit" className="overflow-hidden">
                     <div className="bg-zinc-900/80 border border-white/10 rounded-2xl p-4">
                       {isAiProcessing ? (
                         <div className="flex items-center gap-3 text-cyan-400 text-sm font-medium">
@@ -315,10 +329,7 @@ const Navbar = () => {
                               <span className="text-sm text-emerald-400 font-bold">ETH → USDC</span>
                             </div>
                           </div>
-                          <button 
-                            onClick={() => { setAiInput(''); setIsAiDropdownOpen(false); setIsOpen(false); }}
-                            className="w-full py-3 bg-cyan-500 text-zinc-950 font-bold text-sm rounded-xl active:scale-95 transition-transform"
-                          >
+                          <button onClick={closeAllMenus} className="w-full py-3 bg-cyan-500 text-zinc-950 font-bold text-sm rounded-xl active:scale-95 transition-transform">
                             Prepare Transaction
                           </button>
                         </div>
@@ -329,15 +340,10 @@ const Navbar = () => {
               </AnimatePresence>
             </motion.div>
 
-            {/* Menu Links Mobile */}
+            {/* Mobile Nav Links */}
             <div className="flex flex-col gap-6 relative z-10">
-              {navLinks.map((link, i) => (
-                <motion.div 
-                  key={link.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.15 + (i * 0.1) }}
-                >
+              {NAV_LINKS.map((link, i) => (
+                <motion.div key={link.name} variants={slideInItem} custom={0.15 + (i * 0.1)} initial="hidden" animate="visible">
                   <Link 
                     href={link.href} 
                     onClick={() => setIsOpen(false)}
@@ -357,13 +363,8 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* Wallet Actions Mobile */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="mt-auto pt-12 pb-8 relative z-10"
-            >
+            {/* Mobile Wallet Interface */}
+            <motion.div variants={slideInItem} custom={0.4} initial="hidden" animate="visible" className="mt-auto pt-12 pb-8 relative z-10">
               {isConnected ? (
                 <div className="p-5 rounded-3xl bg-zinc-900/80 border border-white/10 shadow-2xl backdrop-blur-md">
                   <div className="flex items-center justify-between mb-5">
@@ -389,7 +390,6 @@ const Navbar = () => {
                     </button>
                   </div>
                   
-                  {/* Quick Actions (Baru untuk Mobile) */}
                   <div className="grid grid-cols-2 gap-3 border-t border-white/5 pt-5">
                     <button className="flex items-center justify-center gap-2 py-3 bg-white/5 rounded-xl text-sm font-semibold text-white hover:bg-white/10 transition-colors">
                       <Send size={16} className="text-cyan-400" /> Send
@@ -408,6 +408,7 @@ const Navbar = () => {
                 </button>
               )}
             </motion.div>
+
           </motion.div>
         )}
       </AnimatePresence>

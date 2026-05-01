@@ -1,32 +1,30 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Loader2 } from 'lucide-react';
+import { springs, fadeUp, successPop } from '@/lib/animations'; // <-- IMPORT ANIMASI GLOBAL KITA
 
 // --- Komponen Tombol Magnetik yang Lebih Halus ---
 const MagneticButton = ({ children, onClick, isLoading, isSuccess }: { children: React.ReactNode, onClick?: () => void, isLoading: boolean, isSuccess: boolean }) => {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  // Konstanta fisika diubah agar lebih "lengket" tapi responsif
-  const springConfig = { damping: 15, stiffness: 200, mass: 0.1 };
-  const springX = useSpring(x, springConfig);
-  const springY = useSpring(y, springConfig);
+  
+  // Menggunakan konfigurasi spring dari lib/animations.ts
+  const springX = useSpring(x, springs.magnetic);
+  const springY = useSpring(y, springs.magnetic);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!ref.current) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const centerX = left + width / 2;
     const centerY = top + height / 2;
-    x.set((e.clientX - centerX) * 0.4); // Kekuatan tarikan magnet
+    x.set((e.clientX - centerX) * 0.4);
     y.set((e.clientY - centerY) * 0.4);
   };
 
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const handleMouseLeave = () => { x.set(0); y.set(0); };
 
   return (
     <motion.button
@@ -70,13 +68,9 @@ const Footer = () => {
   return (
     <footer className="relative pt-40 pb-10 overflow-hidden bg-[#050505] z-10 border-t border-white/5 mt-20">
       
-      {/* Efek Garis Grid Futuristik di Background */}
+      {/* Background Decorators */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0 mask-image:linear-gradient(to_top,black,transparent)]" style={{ WebkitMaskImage: 'linear-gradient(to top, black 40%, transparent 100%)' }}></div>
-      
-      {/* Garis Pemisah Atas dengan Efek Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
-      
-      {/* Glow Latar Belakang Bawah (Lebih Dramatis) */}
       <div className="absolute -bottom-[20%] left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-cyan-500/10 blur-[150px] pointer-events-none z-0 rounded-full"></div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -85,9 +79,7 @@ const Footer = () => {
           {/* KOLOM KIRI: Teks Besar & Form Waitlist */}
           <div className="w-full lg:w-1/2">
             <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
               className="text-6xl md:text-7xl font-black text-white mb-6 tracking-tighter leading-[0.95]"
             >
               Shape the <br />
@@ -95,21 +87,16 @@ const Footer = () => {
                 Web3 Future.
               </span>
             </motion.h2>
+            
             <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
+              variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.1 }}
               className="text-zinc-400 mb-10 max-w-md text-lg font-medium"
             >
               Join <span className="text-cyan-400 font-bold">4,000+</span> developers receiving updates on new Account Abstraction components and Web3 UI trends.
             </motion.p>
 
             <motion.form 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
+              variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ delay: 0.2 }}
               onSubmit={handleSubmit} 
               className="relative max-w-md"
             >
@@ -130,12 +117,12 @@ const Footer = () => {
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
                 </MagneticButton>
               </div>
+
+              {/* Animasi Pesan Sukses Menggunakan Varian Global */}
               <AnimatePresence>
                 {status === 'success' && (
                   <motion.p 
-                    initial={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0 }}
+                    variants={successPop} initial="hidden" animate="visible" exit="exit"
                     className="absolute -bottom-8 left-4 text-emerald-400 text-sm font-semibold flex items-center gap-2"
                   >
                     <Check size={14} /> Welcome to the nexus. We'll be in touch.
@@ -145,7 +132,7 @@ const Footer = () => {
             </motion.form>
           </div>
 
-          {/* KOLOM KANAN: Tautan Navigasi Footer */}
+          {/* KOLOM KANAN: Tautan Navigasi Footer (TETAP SAMA) */}
           <div className="w-full lg:w-auto grid grid-cols-2 md:grid-cols-3 gap-12 text-sm pt-4">
             <div className="flex flex-col gap-5">
               <h4 className="font-black text-white text-base tracking-tight mb-2">Ecosystem</h4>
@@ -171,10 +158,9 @@ const Footer = () => {
               <a href="#" className="text-zinc-400 hover:text-cyan-400 font-medium transition-colors">MIT License</a>
             </div>
           </div>
-
         </div>
 
-        {/* BOTTOM BAR: Hak Cipta & Sosial Media */}
+        {/* BOTTOM BAR: Hak Cipta & Sosial Media (TETAP SAMA) */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/10 gap-6 mt-12">
           <div className="flex items-center gap-4">
             <div className="w-8 h-8 bg-cyan-500 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.4)]">
@@ -186,7 +172,6 @@ const Footer = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            {/* Social Icons dengan efek Hover Glow */}
             <a href="#" className="p-2.5 rounded-xl bg-zinc-900/50 border border-white/5 text-zinc-400 hover:bg-cyan-500/10 hover:border-cyan-500/30 hover:text-cyan-400 transition-all group">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:scale-110 transition-transform">
                 <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
