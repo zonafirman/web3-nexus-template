@@ -1,9 +1,9 @@
 "use client";
 
 import React from 'react';
-import ComponentPreview from '@/components/docs/ComponentPreview';
+import ComponentPreview from '../ComponentPreview';
 
-// --- IMPORT KOMPONEN ASLI ---
+// --- IMPORT ORIGINAL COMPONENTS ---
 import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import Integration from '@/components/home/Integration';
@@ -11,48 +11,48 @@ import Pricing from '@/components/home/Pricing';
 import Footer from '@/components/layout/Footer';
 
 // ==========================================
-// 1. DATA STATIS KONFIGURASI PREVIEW
+// 1. PREVIEW CONFIGURATION & STATIC DATA
 // ==========================================
-const DOCS_DATA = [
+const LANDING_PAGE_COMPONENTS = [
   {
     title: "Hero Section (The Hook)",
-    description: "Pintu gerbang utama website dengan efek pengetikan kode dan interaksi 3D pada mockup IDE.",
+    description: "The main gateway of the website, featuring a code-typing effect and 3D interaction on the IDE mockup.",
     wrapperClass: "w-full scale-[0.6] sm:scale-75 origin-top border border-white/5 rounded-3xl overflow-hidden h-125",
     component: <Hero />,
-    code: `// Salin kode Hero.tsx dari repositori asli...`
+    code: `// Copy the Hero.tsx code from the original repository...`
   },
   {
     title: "Bento Grid Features",
-    description: "Layout modern untuk memamerkan fitur dengan efek Spotlight dan Tilt 3D.",
+    description: "A modern layout for showcasing features, complete with Spotlight and 3D Tilt effects.",
     wrapperClass: "w-full scale-50 origin-top -mb-75 border border-white/5 rounded-3xl overflow-hidden",
     component: <Features />,
-    code: `// Salin kode Features.tsx dari repositori asli...`
+    code: `// Copy the Features.tsx code from the original repository...`
   },
   {
     title: "Terminal Integration",
-    description: "Simulasi instalasi CLI dengan animasi progress bar.",
+    description: "A CLI installation simulation featuring a smooth progress bar animation.",
     wrapperClass: "w-full scale-90 origin-top border border-white/5 rounded-3xl overflow-hidden p-4 bg-zinc-950",
     component: <Integration />,
-    code: `// Salin kode Integration.tsx dari repositori asli...`
+    code: `// Copy the Integration.tsx code from the original repository...`
   },
   {
     title: "Comparison & Pricing",
-    description: "Strategi monetisasi dengan perbandingan fitur frontal.",
+    description: "A monetization strategy section with a head-on feature comparison table.",
     wrapperClass: "w-full scale-50 origin-top -mb-100 border border-white/5 rounded-3xl overflow-hidden bg-zinc-950",
     component: <Pricing />,
-    code: `// Salin kode Pricing.tsx dari repositori asli...`
+    code: `// Copy the Pricing.tsx code from the original repository...`
   },
   {
     title: "Magnetic Footer",
-    description: "Penutup halaman dengan interaksi tombol magnetik.",
+    description: "A premium page footer that includes an engaging magnetic button interaction.",
     wrapperClass: "w-full scale-75 origin-top border border-white/5 rounded-3xl overflow-hidden bg-zinc-950",
     component: <Footer />,
-    code: `// Salin kode Footer.tsx dari repositori asli...`
+    code: `// Copy the Footer.tsx code from the original repository...`
   }
 ];
 
 // ==========================================
-// 2. KOMPONEN UTAMA
+// 2. MAIN COMPONENT
 // ==========================================
 export default function LandingPageComponentsDocs() {
   return (
@@ -64,16 +64,16 @@ export default function LandingPageComponentsDocs() {
           Landing Page
         </h1>
         <p className="text-zinc-400 text-lg max-w-2xl leading-relaxed">
-          Semua elemen visual utama yang membangun identitas Nexus UI. Komponen ini dirancang untuk konversi tinggi dan performa maksimal di tahun 2026.
+          All the core visual elements that build the Nexus UI identity. These components are designed for high conversion and peak performance.
         </p>
       </div>
 
       <hr className="border-white/5 mb-20" />
 
-      {/* RENDER LIST KOMPONEN SECARA DINAMIS */}
-      {DOCS_DATA.map((item, index) => (
+      {/* DYNAMICALLY RENDER COMPONENT LIST */}
+      {LANDING_PAGE_COMPONENTS.map((item) => (
         <ComponentPreview 
-          key={index}
+          key={item.title}
           title={item.title}
           description={item.description}
           preview={

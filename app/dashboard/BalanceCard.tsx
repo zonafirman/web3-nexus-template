@@ -4,17 +4,28 @@ import React from 'react';
 import { ArrowUpRight, ArrowDownRight, Send, Plus, CreditCard, Activity } from 'lucide-react';
 import { useWeb3Store } from '@/store/useWeb3Store';
 
+// Constants for development mock data
+const MOCK_ETH_PRICE = 3400;
+
+// Quick action configuration extracted to prevent re-creation on every render
+const QUICK_ACTIONS = [
+  { icon: Send, label: 'Send' },
+  { icon: ArrowDownRight, label: 'Receive' },
+  { icon: Plus, label: 'Top Up' },
+  { icon: CreditCard, label: 'Card' },
+];
+
 const BalanceCard = () => {
   const { isConnected, balance } = useWeb3Store();
 
-  // Simulasi konversi ETH ke USD (Anggap 1 ETH = $3,400)
+  // Simulated ETH to USD conversion
   const numericBalance = parseFloat(balance.replace(' ETH', '')) || 0;
-  const usdBalance = (numericBalance * 3400).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const usdBalance = (numericBalance * MOCK_ETH_PRICE).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
     <div className="p-6 md:p-8 rounded-[2rem] bg-gradient-to-br from-zinc-900/80 to-[#09090b]/80 border border-white/10 backdrop-blur-xl h-full flex flex-col justify-between relative overflow-hidden group shadow-2xl">
       
-      {/* Efek Cahaya Latar Belakang */}
+      {/* Ambient Background Glow Effect */}
       <div className="absolute top-0 right-0 w-48 h-48 bg-cyan-500/10 blur-[60px] pointer-events-none group-hover:bg-cyan-500/20 transition-colors duration-700"></div>
 
       <div>
@@ -39,13 +50,8 @@ const BalanceCard = () => {
 
       {/* Quick Action Buttons */}
       <div className="grid grid-cols-4 gap-3 mt-8 relative z-10">
-        {[
-          { icon: Send, label: 'Send' },
-          { icon: ArrowDownRight, label: 'Receive' },
-          { icon: Plus, label: 'Top Up' },
-          { icon: CreditCard, label: 'Card' },
-        ].map((action, i) => (
-          <button key={i} className="flex flex-col items-center gap-2 group/btn">
+        {QUICK_ACTIONS.map((action) => (
+          <button key={action.label} className="flex flex-col items-center gap-2 group/btn">
             <div className="w-12 h-12 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center text-zinc-400 group-hover/btn:text-cyan-400 group-hover/btn:border-cyan-500/40 group-hover/btn:bg-cyan-500/10 transition-all duration-300 shadow-inner">
               <action.icon size={18} className="group-active/btn:scale-90 transition-transform" />
             </div>

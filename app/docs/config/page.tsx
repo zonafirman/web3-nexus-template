@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Settings, Palette, Globe, Database, ArrowRight, CheckCircle2, Copy, FileCode2 } from 'lucide-react';
 import Link from 'next/link';
 
-// --- Helper: Block Kode Copy-Paste ---
+// --- Helper: Copy-Paste Code Block ---
 const CodeBlock = ({ code, title, language = 'tsx' }: { code: string, title?: string, language?: string }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -72,8 +72,8 @@ export default function ConfigurationDocs() {
     <div className="pt-10 pb-20">
       <div className="max-w-4xl relative z-10">
         
-        {/* Header Docs */}
-        <motion.div 
+        {/* Documentation Header */}
+        <motion.header 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-16 border-b border-white/10 pb-12"
@@ -85,17 +85,17 @@ export default function ConfigurationDocs() {
             Configuration
           </h1>
           <p className="text-lg md:text-xl text-zinc-400 font-medium max-w-2xl leading-relaxed">
-            Sesuaikan Nexus UI agar selaras dengan identitas proyek Anda. Atur tema warna, metadata SEO, dan koneksi Web3 Provider dalam beberapa menit.
+            Customize Nexus UI to align with your project's identity. Configure color themes, SEO metadata, and Web3 Provider connections in minutes.
           </p>
-        </motion.div>
+        </motion.header>
 
         {/* 1. Theming (Tailwind v4) */}
         <ConfigSection 
           title="1. Theming & Colors (Tailwind v4)" 
-          description="Nexus UI dibangun di atas sistem Tailwind CSS v4 terbaru. Anda tidak perlu lagi file tailwind.config.js yang rumit. Cukup ubah variabel CSS global."
+          description="Nexus UI is built on top of the latest Tailwind CSS v4 system. You no longer need a complex tailwind.config.js file. Just change the global CSS variables."
           icon={Palette}
         >
-          <p className="text-zinc-300 text-sm mb-4">Buka file <code>app/globals.css</code> dan cari blok direktif <code>@theme</code>. Ubah warna utama sesuai *brand* Anda.</p>
+          <p className="text-zinc-300 text-sm mb-4">Open the <code>app/globals.css</code> file and find the <code>@theme</code> directive block. Change the primary color to match your brand.</p>
           
           <CodeBlock 
             title="app/globals.css"
@@ -103,34 +103,34 @@ export default function ConfigurationDocs() {
             code={`@import "tailwindcss";
 
 @theme {
-  /* Ubah font default di sini (Jika Anda tidak memakai Geist) */
+  /* Change default font here (If you aren't using Geist) */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 
-  /* Ubah warna Cyan menjadi warna brand Anda (misal: ungu/violet) */
+  /* Change Cyan to your brand color (e.g., purple/violet) */
   --color-primary: #8b5cf6; 
   --color-primary-glow: rgba(139, 92, 246, 0.4);
   
-  /* Latar belakang UI Glassmorphism */
+  /* Glassmorphism UI background */
   --color-glass-bg: rgba(255, 255, 255, 0.05);
   --color-glass-border: rgba(255, 255, 255, 0.1);
 }
 
-/* Sisa pengaturan styling ... */`} 
+/* Rest of the styling configuration ... */`} 
           />
           <div className="p-4 mt-6 rounded-xl bg-zinc-900/80 border border-white/10 flex items-center gap-4">
             <div className="w-10 h-10 rounded-full bg-violet-500 shadow-[0_0_15px_#8b5cf6]"></div>
-            <p className="text-sm text-zinc-400">Dengan mengubah <code>--color-primary</code>, seluruh tombol, glow, dan interaksi yang tadinya berwarna Sian (Cyan) akan langsung berubah secara otomatis di seluruh aplikasi.</p>
+            <p className="text-sm text-zinc-400">By changing <code>--color-primary</code>, all buttons, glows, and interactions that were previously Cyan will instantly update automatically across the entire application.</p>
           </div>
         </ConfigSection>
 
         {/* 2. Web3 Provider Setup */}
         <ConfigSection 
           title="2. Web3 Provider (Wagmi/Viem)" 
-          description="Nexus UI Pro disiapkan untuk integrasi mulus dengan Wagmi dan Viem. Atur rantai (chains) yang didukung oleh dApp Anda."
+          description="Nexus UI Pro is prepared for seamless integration with Wagmi and Viem. Configure the supported chains for your dApp."
           icon={Globe}
         >
-          <p className="text-zinc-300 text-sm mb-4">Konfigurasi jaringan *blockchain* dilakukan di dalam file *provider* utama.</p>
+          <p className="text-zinc-300 text-sm mb-4">Blockchain network configuration is done inside the main provider file.</p>
           
           <CodeBlock 
             title="config/web3.ts"
@@ -149,14 +149,14 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 }
 
-// Tambah atau kurangi chain di array 'chains' bawah ini
+// Add or remove chains in the 'chains' array below
 const chains = [mainnet, arbitrum, optimism, polygon] as const;
 
 export const config = defaultWagmiConfig({
   chains,
   projectId,
   metadata,
-  ssr: true, // Wajib diaktifkan untuk Next.js 15 App Router
+  ssr: true, // Must be enabled for Next.js 15 App Router
 });`} 
           />
         </ConfigSection>
@@ -164,7 +164,7 @@ export const config = defaultWagmiConfig({
         {/* 3. Global State (Zustand) */}
         <ConfigSection 
           title="3. Global State (Zustand)" 
-          description="Store Zustand kami mengelola status UI seperti Sidebar, Tema, dan Data Mockup. Sesuaikan nilai default di sini."
+          description="Our Zustand store manages UI states like the Sidebar, Themes, and Mockup Data. Customize the default values here."
           icon={Database}
         >
           <CodeBlock 
@@ -181,9 +181,9 @@ interface Web3State {
 }
 
 export const useWeb3Store = create<Web3State>((set) => ({
-  isConnected: false, // Set ke true jika Anda ingin testing state UI terkoneksi
+  isConnected: false, // Set to true if you want to test connected UI state
   address: null,
-  balance: '10.50 ETH', // Mock balance awal
+  balance: '10.50 ETH', // Initial mock balance
   connect: (addr) => set({ isConnected: true, address: addr }),
   disconnect: () => set({ isConnected: false, address: null }),
 }));`} 

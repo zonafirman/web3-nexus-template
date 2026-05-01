@@ -4,25 +4,26 @@ import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Fingerprint, Zap, Blocks, ShieldCheck, Cpu, Network, CheckCircle2 } from 'lucide-react';
 
-// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+// --- IMPORT FROM GLOBAL ANIMATION HUB ---
 import { fadeUp, slideInLeft, scannerLine, floatUp, floatDown, flowRight } from '@/lib/animations';
 
 // ==========================================
-// 1. KOMPONEN KARTU 3D BENTO (TILT CARD)
+// 1. 3D BENTO CARD COMPONENT (TILT CARD)
 // ==========================================
+const SPRING_CONFIG = { damping: 20, stiffness: 200, mass: 0.5 };
+
 const TiltBentoCard = ({ children, className, colSpan }: { children: React.ReactNode, className?: string, colSpan: string }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   
-  // Fisika Mouse & Spotlight
+  // Mouse Physics & Spotlight
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   
-  const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), springConfig);
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), springConfig);
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [10, -10]), SPRING_CONFIG);
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-10, 10]), SPRING_CONFIG);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return;
@@ -53,7 +54,7 @@ const TiltBentoCard = ({ children, className, colSpan }: { children: React.React
         <motion.div className="pointer-events-none absolute -inset-px rounded-3xl z-0 transition-opacity duration-500" animate={{ opacity: isHovered ? 1 : 0 }} style={{ background: bgStyle as any }} />
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent z-0"></div>
 
-        {/* Kontainer 3D (Melayang) */}
+        {/* 3D Container (Floating) */}
         <div className="relative z-10 h-full p-8 flex flex-col" style={{ transform: "translateZ(50px)" }}>
           {children}
         </div>
@@ -63,18 +64,18 @@ const TiltBentoCard = ({ children, className, colSpan }: { children: React.React
 };
 
 // ==========================================
-// 2. KOMPONEN UTAMA (FEATURES GRID)
+// 2. MAIN COMPONENT (FEATURES GRID)
 // ==========================================
 const Features = () => {
   return (
     <section className="py-32 relative z-10" id="features">
       
-      {/* Latar Belakang Dekoratif */}
+      {/* Decorative Background */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-cyan-500/10 blur-[150px] pointer-events-none -z-10 rounded-full"></div>
 
       <div className="max-w-7xl mx-auto px-6">
         
-        {/* HEADER FEATURES */}
+        {/* FEATURES HEADER */}
         <div className="mb-20 max-w-2xl">
           <motion.div 
             variants={slideInLeft} initial="hidden" whileInView="visible" viewport={{ once: true }}
@@ -98,7 +99,7 @@ const Features = () => {
         {/* BENTO GRID */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[360px]">
           
-          {/* KARTU 1: Frictionless Onboarding */}
+          {/* CARD 1: Frictionless Onboarding */}
           <TiltBentoCard colSpan="md:col-span-2">
             <div className="flex justify-between items-start mb-auto">
               <div className="relative w-16 h-16 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center shadow-[0_0_20px_rgba(0,0,0,0.5)] group-hover:border-cyan-500/50 transition-colors duration-500 overflow-hidden">
@@ -124,7 +125,7 @@ const Features = () => {
             </div>
           </TiltBentoCard>
 
-          {/* KARTU 2: Performance */}
+          {/* CARD 2: Performance */}
           <TiltBentoCard colSpan="md:col-span-1">
              <div className="flex justify-between items-start mb-auto">
               <div className="w-16 h-16 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center group-hover:rotate-12 group-hover:border-yellow-500/50 transition-all duration-500 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
@@ -149,7 +150,7 @@ const Features = () => {
             </div>
           </TiltBentoCard>
 
-          {/* KARTU 3: Pre-Configured Hooks (Networks) */}
+          {/* CARD 3: Pre-Configured Hooks (Networks) */}
           <TiltBentoCard colSpan="md:col-span-3" className="flex-col md:flex-row items-start md:items-center overflow-visible">
             <div className="flex-1 md:pr-8 z-10 h-full flex flex-col justify-end md:justify-center">
               <div className="w-16 h-16 rounded-2xl bg-zinc-950 border border-white/10 flex items-center justify-center mb-6 group-hover:-translate-y-2 group-hover:border-blue-500/50 transition-all duration-500 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
@@ -161,7 +162,7 @@ const Features = () => {
               </p>
             </div>
             
-            {/* Visualisasi Node 3D */}
+            {/* 3D Node Visualization */}
             <div className="hidden md:flex flex-1 h-full items-center justify-end opacity-60 group-hover:opacity-100 transition-opacity duration-700 relative" style={{ transform: "translateZ(60px)" }}>
               <div className="absolute right-12 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full group-hover:bg-blue-500/20 transition-colors"></div>
               

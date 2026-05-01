@@ -1,10 +1,20 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import SwapCard from "../SwapCard";
 import { BarChart3, TrendingUp, Maximize2 } from 'lucide-react';
 
+// Mock data for market statistics
+const marketStats = [
+  { label: '24h Volume', value: '$1.2B' },
+  { label: 'Market Cap', value: '$410B' },
+  { label: 'FDV', value: '$410B' },
+];
+
 export default function SwapPage() {
+  const [activeTimeframe, setActiveTimeframe] = useState('1D');
+  const timeframes = ['1H', '1D', '1W', '1M'];
+
   return (
     <div className="p-8 pt-8 max-w-7xl mx-auto pb-24">
       <header className="mb-8 flex justify-between items-end pb-6 border-b border-white/5">
@@ -15,7 +25,7 @@ export default function SwapPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Kolom Kiri: Pro Charting Area */}
+        {/* Left Column: Pro Charting Area */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           <div className="p-6 rounded-[2rem] bg-zinc-900/40 border border-white/10 backdrop-blur-md h-125 flex flex-col">
             
@@ -36,12 +46,20 @@ export default function SwapPage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                {['1H', '1D', '1W', '1M'].map((tf, i) => (
-                  <button key={i} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${i === 1 ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-zinc-800 text-zinc-400 hover:text-white'}`}>
+                {timeframes.map((tf) => (
+                  <button 
+                    key={tf} 
+                    onClick={() => setActiveTimeframe(tf)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                      activeTimeframe === tf 
+                        ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' 
+                        : 'bg-zinc-800 text-zinc-400 border-transparent hover:text-white'
+                    }`}
+                  >
                     {tf}
                   </button>
                 ))}
-                <button className="p-1.5 ml-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white"><Maximize2 size={16} /></button>
+                <button className="p-1.5 ml-2 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white transition-colors"><Maximize2 size={16} /></button>
               </div>
             </div>
 
@@ -57,16 +75,16 @@ export default function SwapPage() {
           
           {/* Market Stats */}
           <div className="grid grid-cols-3 gap-4">
-            {['24h Volume', 'Market Cap', 'FDV'].map((stat, i) => (
-              <div key={i} className="p-5 rounded-2xl bg-zinc-900/40 border border-white/10 backdrop-blur-md">
-                <p className="text-xs text-zinc-500 mb-1">{stat}</p>
-                <p className="text-lg font-bold text-white">{i === 0 ? '$1.2B' : i === 1 ? '$410B' : '$410B'}</p>
+            {marketStats.map((stat, i) => (
+              <div key={stat.label} className="p-5 rounded-2xl bg-zinc-900/40 border border-white/10 backdrop-blur-md hover:bg-zinc-900/60 transition-colors">
+                <p className="text-xs text-zinc-500 mb-1">{stat.label}</p>
+                <p className="text-lg font-bold text-white">{stat.value}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Kolom Kanan: Interactive Swap Component */}
+        {/* Right Column: Interactive Swap Component */}
         <div className="lg:col-span-1">
           <SwapCard />
         </div>

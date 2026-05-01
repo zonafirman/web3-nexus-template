@@ -4,22 +4,41 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldAlert, ShieldCheck, Search, Activity, Trash2, ExternalLink } from 'lucide-react';
 
-const connectedApps = [
-  { name: 'Uniswap V3', url: 'app.uniswap.org', risk: 'Low', allowance: 'Unlimited USDC', date: 'Oct 12, 2025' },
-  { name: 'Aave Protocol', url: 'app.aave.com', risk: 'Low', allowance: '10.0 ETH', date: 'Nov 05, 2025' },
-  { name: 'Unknown Contract', url: '0x8f2...9a12', risk: 'High', allowance: 'Unlimited USDT', date: 'Yesterday' },
+// 1. Define TypeScript interface for robust development
+interface ConnectedApp {
+  id: string;
+  name: string;
+  url: string;
+  risk: 'Low' | 'Medium' | 'High';
+  allowance: string;
+  date: string;
+}
+
+// 2. Mock data for UI development
+const connectedApps: ConnectedApp[] = [
+  { id: 'app-1', name: 'Uniswap V3', url: 'app.uniswap.org', risk: 'Low', allowance: 'Unlimited USDC', date: 'Oct 12, 2025' },
+  { id: 'app-2', name: 'Aave Protocol', url: 'app.aave.com', risk: 'Low', allowance: '10.0 ETH', date: 'Nov 05, 2025' },
+  { id: 'app-3', name: 'Unknown Contract', url: '0x8f2...9a12', risk: 'High', allowance: 'Unlimited USDT', date: 'Yesterday' },
 ];
 
 export default function SecurityPage() {
   const [isScanning, setIsScanning] = useState(false);
+  const [contractInput, setContractInput] = useState('');
 
+  // Simulated scanning logic
   const runScan = () => {
+    if (!contractInput.trim()) return; // Prevent scanning empty inputs
     setIsScanning(true);
-    setTimeout(() => setIsScanning(false), 3000);
+    setTimeout(() => setIsScanning(false), 3000); // Mock 3-second network request
   };
 
   return (
-    <div className="p-8 pt-8 max-w-5xl mx-auto pb-24">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-8 pt-8 max-w-5xl mx-auto pb-24"
+    >
+      {/* Header Section */}
       <header className="mb-10 pb-8 border-b border-white/5">
         <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
           Security Center <ShieldCheck className="text-emerald-500" size={28} />
@@ -44,7 +63,9 @@ export default function SecurityPage() {
             </div>
           </div>
           <h3 className="font-bold text-white text-lg">Wallet Health</h3>
-          <p className="text-sm text-emerald-400 mt-1">1 High Risk Found</p>
+          <p className="text-sm text-red-400 mt-1 flex items-center gap-1 font-medium">
+            <ShieldAlert size={14} /> 1 High Risk Found
+          </p>
         </div>
 
         {/* AI Contract Scanner */}
@@ -55,11 +76,17 @@ export default function SecurityPage() {
           <div className="flex gap-3">
             <div className="flex-1 flex items-center gap-3 p-3 bg-zinc-950 border border-white/10 rounded-2xl focus-within:border-cyan-500/50 transition-colors">
               <Search size={18} className="text-zinc-500 ml-2" />
-              <input type="text" placeholder="0x..." className="bg-transparent border-none outline-none text-white w-full text-sm" />
+              <input 
+                type="text" 
+                placeholder="0x..." 
+                value={contractInput}
+                onChange={(e) => setContractInput(e.target.value)}
+                className="bg-transparent border-none outline-none text-white w-full text-sm" 
+              />
             </div>
             <button 
               onClick={runScan}
-              disabled={isScanning}
+              disabled={isScanning || contractInput.trim() === ''}
               className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold rounded-2xl transition-all disabled:opacity-50 flex items-center gap-2 min-w-[120px] justify-center"
             >
               {isScanning ? (
@@ -108,8 +135,8 @@ export default function SecurityPage() {
               </tr>
             </thead>
             <tbody className="text-sm">
-              {connectedApps.map((app, i) => (
-                <tr key={i} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
+              {connectedApps.map((app) => (
+                <tr key={app.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                   <td className="py-4">
                     <p className="font-bold text-white flex items-center gap-2">
                       {app.name} <ExternalLink size={12} className="text-zinc-600" />
@@ -134,6 +161,6 @@ export default function SecurityPage() {
         </div>
       </div>
 
-    </div>
+    </motion.div>
   );
 }

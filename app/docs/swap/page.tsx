@@ -1,11 +1,13 @@
 "use client";
 
 import React from 'react';
-import ComponentPreview from '@/components/docs/ComponentPreview';
-import SwapCard from '@/components/dashboard/SwapCard';
+import ComponentPreview from '../ComponentPreview';
+
+// --- IMPORT ORIGINAL COMPONENTS ---
+import SwapCard from '@/app/dashboard/SwapCard';
 
 // ==========================================
-// 1. DATA STATIS & KODE SUMBER
+// 1. STATIC DATA & SOURCE CODE
 // ==========================================
 const SWAP_CARD_CODE = `"use client";
 import React, { useState } from 'react';
@@ -16,7 +18,7 @@ const SwapCard = () => {
 
   return (
     <div className="p-6 md:p-8 rounded-[2.5rem] bg-zinc-900/60 border border-white/10 backdrop-blur-2xl shadow-2xl relative overflow-hidden h-full flex flex-col">
-       {/* ... (Sisa kode Swap Card dengan input dinamis) ... */}
+       {/* ... (Rest of Swap Card code with dynamic inputs) ... */}
     </div>
   );
 };
@@ -24,7 +26,7 @@ const SwapCard = () => {
 export default SwapCard;`;
 
 // ==========================================
-// 2. KOMPONEN UTAMA
+// 2. MAIN COMPONENT
 // ==========================================
 export default function SwapDocs() {
   return (
@@ -36,7 +38,7 @@ export default function SwapDocs() {
           Swap Interface
         </h1>
         <p className="text-zinc-400 text-lg max-w-2xl leading-relaxed">
-          Komponen esensial untuk aplikasi DeFi (Decentralized Finance). Antarmuka pertukaran token ini dirancang dengan kalkulasi <i>real-time</i> dan interaksi pengguna tingkat tinggi.
+          An essential component for DeFi (Decentralized Finance) applications. This token exchange interface is designed with <i>real-time</i> calculations and high-level user interactions.
         </p>
       </div>
 
@@ -45,10 +47,10 @@ export default function SwapDocs() {
       {/* COMPONENT PREVIEW */}
       <ComponentPreview 
         title="DEX Swap Card"
-        description="Ketik angka di kolom 'You Sell' dan perhatikan bagaimana nilai 'You Get' terkalkulasi secara otomatis dengan efek antarmuka premium."
+        description="Type a number in the 'You Sell' field and watch how the 'You Get' value is automatically calculated with premium interface effects."
         preview={
           <div className="w-full max-w-md h-[550px] relative mt-10">
-            {/* Latar belakang tambahan agar efek blur SwapCard terlihat nyata */}
+            {/* Additional background to make the SwapCard's blur effect look realistic */}
             <div className="absolute inset-0 bg-blue-500/10 blur-[80px] rounded-full -z-10"></div>
             <SwapCard />
           </div>

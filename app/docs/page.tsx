@@ -5,7 +5,22 @@ import { motion } from 'framer-motion';
 import { Terminal, Palette, LayoutDashboard, Copy, CheckCircle2, Zap, Lock, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 
-// --- Helper: Block Kode Copy-Paste ---
+// ==========================================
+// 1. STATIC CONFIGURATION
+// ==========================================
+const PRO_FEATURES = [
+  'Zustand Global State Management', 
+  'Viem & Wagmi Pre-configured Hooks', 
+  'Working AI Intent Swap Engine', 
+  'Real-time Gas Fee Live Tracker', 
+  'Interactive Charting without Chart.js', 
+  'Premium Figma Source Files'
+];
+
+// ==========================================
+// 2. HELPER COMPONENTS
+// ==========================================
+// --- Helper: Copy-Paste Code Block ---
 const CodeBlock = ({ code, title }: { code: string, title?: string }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -41,7 +56,7 @@ const CodeBlock = ({ code, title }: { code: string, title?: string }) => {
   );
 };
 
-// --- Helper: Section Dokumentasi ---
+// --- Helper: Documentation Section ---
 const DocSection = ({ title, icon: Icon, children }: { title: string, icon: React.ElementType, children: React.ReactNode }) => (
   <section className="mb-20">
     <div className="flex items-center gap-3 mb-6">
@@ -56,12 +71,15 @@ const DocSection = ({ title, icon: Icon, children }: { title: string, icon: Reac
   </section>
 );
 
+// ==========================================
+// 3. MAIN COMPONENT
+// ==========================================
 const DocsIntroduction = () => {
   return (
     <div className="pt-10 pb-20 selection:bg-cyan-500/30">
       <div className="max-w-4xl relative z-10">
         
-        {/* Header Docs */}
+        {/* Docs Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -90,7 +108,7 @@ const DocsIntroduction = () => {
 
         {/* 1. Quick Start */}
         <DocSection title="Quick Start" icon={Terminal}>
-          <p>Kloning repositori Open Source kami dan jalankan *environment* pengembangan lokal Anda dalam waktu kurang dari 60 detik.</p>
+          <p>Clone our Open Source repository and spin up your local development environment in less than 60 seconds.</p>
           <CodeBlock 
             title="terminal"
             code={`npx create-next-app -e https://github.com/zonafirman/web3-nexus-template my-dapp\ncd my-dapp\nnpm install\nnpm run dev`} 
@@ -99,19 +117,19 @@ const DocsIntroduction = () => {
 
         {/* 2. Dashboard Architecture */}
         <DocSection title="Dashboard Architecture (SPA)" icon={LayoutDashboard}>
-          <p>Nexus UI dibangun dengan pola desain modern. Kami memanfaatkan fitur <strong>Nested Layouts</strong> dari Next.js 15 App Router untuk menciptakan pengalaman <em>Single Page Application</em> murni.</p>
+          <p>Nexus UI is built with modern design patterns. We utilize the <strong>Nested Layouts</strong> feature of the Next.js 15 App Router to create a pure <em>Single Page Application</em> experience.</p>
           <CodeBlock 
             title="app/dashboard/layout.tsx"
             code={`import DashboardSidebar from "@/components/layout/DashboardSidebar";\n\nexport default function DashboardLayout({ children }: { children: React.ReactNode }) {\n  return (\n    <div className="flex min-h-screen bg-zinc-950 text-white">\n      {/* Sidebar persists across all /dashboard routes */}\n      <DashboardSidebar />\n      \n      {/* Only this main area re-renders on navigation */}\n      <main className="flex-1 p-8 h-screen overflow-y-auto">\n        {children}\n      </main>\n    </div>\n  );\n}`} 
           />
           <p className="mt-4 p-4 rounded-xl bg-blue-500/5 border border-blue-500/20 text-blue-300 text-sm">
-            <strong>Pro Tip:</strong> Struktur ini memastikan status dompet Web3 Anda (koneksi Wagmi/Viem) tidak terputus saat pengguna berpindah menu dari Overview ke Settings.
+            <strong>Pro Tip:</strong> This structure ensures your Web3 wallet state (Wagmi/Viem connection) is not lost when users navigate from Overview to Settings.
           </p>
         </DocSection>
 
         {/* 3. Theming Engine */}
         <DocSection title="Theming Engine (Tailwind v4)" icon={Palette}>
-          <p>Kami telah memindahkan sistem tema dari config lama ke CSS native menggunakan fitur `@theme` terbaru dari Tailwind CSS v4. Ini membuat website Anda lebih ringan dan reaktif.</p>
+          <p>We have migrated the theme system from the old config to native CSS using the latest \`@theme\` feature in Tailwind CSS v4. This makes your website lighter and more reactive.</p>
           <div className="grid md:grid-cols-2 gap-6 mt-6">
             <div className="p-6 rounded-2xl bg-[#09090b] border border-white/10 shadow-lg relative overflow-hidden group hover:border-cyan-500/30 transition-colors">
               <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-[50px] pointer-events-none group-hover:bg-cyan-500/20"></div>
@@ -151,19 +169,12 @@ const DocsIntroduction = () => {
                 </h3>
                 
                 <p className="text-zinc-400 mb-10 max-w-xl leading-relaxed">
-                  Versi Lite memberi Anda struktur visual yang luar biasa. Namun, jika Anda ingin menghemat ratusan jam menyambungkan antarmuka ini ke Smart Contract, Anda membutuhkan <strong>Nexus UI Pro</strong>.
+                  The Lite version gives you an incredible visual structure. However, if you want to save hundreds of hours connecting this interface to Smart Contracts, you need <strong>Nexus UI Pro</strong>.
                 </p>
                 
                 <div className="grid sm:grid-cols-2 gap-4 mb-10">
-                  {[
-                    'Zustand Global State Management', 
-                    'Viem & Wagmi Pre-configured Hooks', 
-                    'Working AI Intent Swap Engine', 
-                    'Real-time Gas Fee Live Tracker', 
-                    'Interactive Charting without Chart.js', 
-                    'Premium Figma Source Files'
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-500/30 transition-colors">
+                  {PRO_FEATURES.map((item) => (
+                    <div key={item} className="flex items-start gap-3 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-500/30 transition-colors">
                       <CheckCircle2 size={18} className="text-cyan-400 mt-0.5 flex-shrink-0" /> 
                       <span className="text-sm font-semibold text-white">{item}</span>
                     </div>

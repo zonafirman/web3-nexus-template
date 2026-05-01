@@ -5,11 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Package, FileText, Play, ArrowRight, Copy, CheckCircle2, DownloadCloud } from 'lucide-react';
 import Link from 'next/link';
 
-// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+// --- IMPORT FROM GLOBAL ANIMATION HUB ---
 import { fadeUp, fadeUpItem, tabSlideUp } from '@/lib/animations';
 
 // ==========================================
-// 1. DATA STATIS & KONFIGURASI
+// 1. STATIC DATA & CONFIGURATION
 // ==========================================
 const PACKAGE_MANAGERS = ['npm', 'yarn', 'pnpm', 'bun'] as const;
 
@@ -98,7 +98,7 @@ export default function InstallationDocs() {
             Installation
           </h1>
           <p className="text-lg text-zinc-400 font-medium max-w-2xl leading-relaxed">
-            Panduan lengkap untuk menginstal dan menjalankan Nexus UI di mesin lokal Anda. Mulai proyek Web3 Anda dengan fondasi yang kokoh.
+            A comprehensive guide to installing and running Nexus UI on your local machine. Start your Web3 project with a solid foundation.
           </p>
         </motion.div>
 
@@ -111,9 +111,9 @@ export default function InstallationDocs() {
             <Terminal size={18} className="text-blue-400" /> System Requirements
           </h4>
           <ul className="space-y-2 text-sm text-zinc-300">
-            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Node.js versi 18.17 atau lebih baru.</li>
-            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Git terinstal di komputer Anda.</li>
-            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Ekstensi Wallet Web3 (MetaMask/Rabby) di browser untuk testing.</li>
+            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Node.js version 18.17 or later.</li>
+            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> Git installed on your machine.</li>
+            <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-emerald-500" /> A Web3 Wallet extension (MetaMask/Rabby) in your browser for testing.</li>
           </ul>
         </motion.div>
 
@@ -125,18 +125,18 @@ export default function InstallationDocs() {
           {/* STEP 1 */}
           <StepIndicator number={1} title="Clone the Repository" icon={DownloadCloud}>
             <p>
-              Cara tercepat untuk memulai adalah menggunakan <code>create-next-app</code> dengan menargetkan repositori template Nexus UI. Buka terminal Anda dan jalankan perintah berikut:
+              The fastest way to get started is by using <code>create-next-app</code> targeting the Nexus UI template repository. Open your terminal and run the following command:
             </p>
             <CodeBlock 
               title="Terminal"
               code={`npx create-next-app -e https://github.com/zonafirman/web3-nexus-template my-dapp\ncd my-dapp`} 
             />
-            <p className="text-xs text-zinc-500">Perintah ini akan mengunduh template dan membuat folder baru bernama <code>my-dapp</code>.</p>
+            <p className="text-xs text-zinc-500">This command will download the template and create a new folder named <code>my-dapp</code>.</p>
           </StepIndicator>
 
           {/* STEP 2 */}
           <StepIndicator number={2} title="Install Dependencies" icon={Package}>
-            <p>Pilih <em>package manager</em> favorit Anda untuk menginstal dependensi yang dibutuhkan.</p>
+            <p>Choose your preferred <em>package manager</em> to install the required dependencies.</p>
             
             <div className="mt-4">
               <div className="flex gap-2 mb-2">
@@ -168,26 +168,26 @@ export default function InstallationDocs() {
           {/* STEP 3 */}
           <StepIndicator number={3} title="Environment Variables" icon={FileText}>
             <p>
-              Karena ini adalah aplikasi Web3, Anda memerlukan ID Proyek untuk WalletConnect atau RPC Keys. 
-              Salin file <code>.env.example</code> menjadi <code>.env.local</code>.
+              Since this is a Web3 application, you will need a Project ID for WalletConnect or RPC Keys. 
+              Copy the <code>.env.example</code> file to <code>.env.local</code>.
             </p>
             <CodeBlock title="Terminal" code={`cp .env.example .env.local`} />
-            <p className="mt-4">Buka <code>.env.local</code> dan isi variabel berikut:</p>
+            <p className="mt-4">Open <code>.env.local</code> and fill in the following variables:</p>
             <CodeBlock 
               title=".env.local"
               code={`NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID="your_project_id_here"\nNEXT_PUBLIC_ALCHEMY_API_KEY="your_alchemy_key_here"`} 
             />
             <p className="text-xs p-3 bg-yellow-500/10 text-yellow-500 rounded-xl border border-yellow-500/20">
-              <strong>Penting:</strong> Jangan pernah mengunggah file <code>.env.local</code> ke GitHub (file ini sudah diabaikan dalam .gitignore).
+              <strong>Important:</strong> Never upload your <code>.env.local</code> file to GitHub (it is already ignored in your .gitignore file).
             </p>
           </StepIndicator>
 
           {/* STEP 4 */}
           <StepIndicator number={4} title="Run Development Server" icon={Play}>
-            <p>Anda sudah siap! Jalankan server pengembangan lokal untuk melihat hasil akhirnya.</p>
+            <p>You are all set! Run the local development server to see the final result.</p>
             <CodeBlock title="Terminal" code={RUN_COMMANDS[activeTab]} />
             <p>
-              Buka <a href="http://localhost:3000" className="text-cyan-400 hover:underline">http://localhost:3000</a> di browser Anda untuk melihat hasilnya.
+              Open <a href="http://localhost:3000" className="text-cyan-400 hover:underline">http://localhost:3000</a> in your browser to see the result.
             </p>
           </StepIndicator>
         </motion.div>

@@ -11,7 +11,7 @@ import Link from 'next/link';
 import AuthModal from '@/components/web3/AuthModal';
 import { useWeb3Store } from '@/store/useWeb3Store';
 
-// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+// --- IMPORT FROM GLOBAL ANIMATION HUB ---
 import { navbarIsland, dropdownBlur, mobileMenu, slideInItem, inlineExpand } from '@/lib/animations';
 
 const NAV_LINKS = [
@@ -20,8 +20,18 @@ const NAV_LINKS = [
   { name: 'Docs', href: '/docs' },
 ];
 
+// ==========================================
+// 1. STATIC STYLES & CONFIGURATION
+// ==========================================
+const AI_INPUT_CLASS = "flex items-center gap-2 px-4 py-1.5 bg-zinc-950/50 rounded-full border border-white/5 w-full group overflow-hidden focus-within:border-cyan-500/50 transition-colors relative z-20";
+const GLASS_ACTIVE_CLASS = "bg-zinc-950/80 backdrop-blur-2xl border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]";
+const GLASS_INACTIVE_CLASS = "bg-zinc-900/40 backdrop-blur-lg border-white/5 shadow-xl";
+
+// ==========================================
+// 2. MAIN NAVBAR COMPONENT
+// ==========================================
 const Navbar = () => {
-  // --- States ---
+  // --- State Management ---
   const [isScrolled, setIsScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -33,13 +43,13 @@ const Navbar = () => {
   const [isAiDropdownOpen, setIsAiDropdownOpen] = useState(false);
   const [isAiProcessing, setIsAiProcessing] = useState(false);
   
-  // --- Refs & Hooks ---
+  // --- Refs & Global Hooks ---
   const dropdownRef = useRef<HTMLDivElement>(null);
   const aiRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { isConnected, address, balance, disconnect } = useWeb3Store();
 
-  // --- Effects ---
+  // --- Lifecycle Effects ---
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,7 +71,7 @@ const Navbar = () => {
 
   if (pathname?.startsWith('/dashboard')) return null;
 
-  // --- Handlers ---
+  // --- Event Handlers ---
   const handleCopyAddress = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (address) {
@@ -97,12 +107,8 @@ const Navbar = () => {
     setAiInput('');
   };
 
-  // --- Dynamic CSS Classes ---
-  const glassContainerClass = isScrolled || isOpen || isAiDropdownOpen
-    ? "bg-zinc-950/80 backdrop-blur-2xl border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]" 
-    : "bg-zinc-900/40 backdrop-blur-lg border-white/5 shadow-xl";
-
-  const aiInputClass = `flex items-center gap-2 px-4 py-1.5 bg-zinc-950/50 rounded-full border border-white/5 w-full group overflow-hidden focus-within:border-cyan-500/50 transition-colors relative z-20`;
+  // --- Dynamic CSS Resolution ---
+  const currentGlassClass = isScrolled || isOpen || isAiDropdownOpen ? GLASS_ACTIVE_CLASS : GLASS_INACTIVE_CLASS;
 
   return (
     <>
@@ -115,7 +121,7 @@ const Navbar = () => {
         animate="visible"
         className="fixed top-6 left-1/2 -translate-x-1/2 z-[60] w-[95%] max-w-5xl"
       >
-        <div className={`transition-all duration-500 rounded-full border ${glassContainerClass}`}>
+        <div className={`transition-all duration-500 rounded-full border ${currentGlassClass}`}>
           <div className="flex justify-between items-center px-4 py-3">
             
             {/* BRAND LOGO */}
@@ -128,7 +134,7 @@ const Navbar = () => {
 
             {/* AI COMMAND CENTER (DESKTOP) */}
             <div className="hidden md:flex flex-1 max-w-sm mx-8 relative" ref={aiRef}>
-              <div className={aiInputClass}>
+              <div className={AI_INPUT_CLASS}>
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-cyan-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                 <Sparkles size={14} className={isAiDropdownOpen ? "text-cyan-400" : "text-cyan-500"} />
                 <input 

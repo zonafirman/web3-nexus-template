@@ -16,7 +16,7 @@ const BalanceCard = () => {
 
   return (
     <div className="p-6 md:p-8 rounded-[2rem] bg-gradient-to-br from-zinc-900/80 to-[#09090b]/80 border border-white/10 backdrop-blur-xl h-full flex flex-col justify-between relative overflow-hidden shadow-2xl">
-      {/* ... (Sisa kode Balance Card) ... */}
+      {/* ... (Rest of the Balance Card code) ... */}
     </div>
   );
 };
@@ -25,20 +25,22 @@ export default BalanceCard;`;
 export default function BalanceCardDocs() {
   return (
     <div className="pt-10 pb-20">
-      <div className="mb-12">
+      
+      {/* Header Section */}
+      <header className="mb-12">
         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">
           Balance Card
         </h1>
         <p className="text-zinc-400 text-lg max-w-2xl leading-relaxed">
-          Kartu saldo utama untuk Dashboard. Dilengkapi dengan efek cahaya <i>glassmorphism</i> yang reaktif dan terhubung langsung ke Global State (Zustand) untuk membaca saldo Web3 secara <i>real-time</i>.
+          The primary balance card for the Dashboard. Features reactive <i>glassmorphism</i> glow effects and connects directly to the Global State (Zustand) to read Web3 balances in real-time.
         </p>
-      </div>
+      </header>
 
       <hr className="border-white/5 mb-16" />
 
       <ComponentPreview 
         title="Balance Card Component"
-        description="Cobalah untuk melakukan 'Connect' pada Navbar, dan perhatikan bagaimana nilai pada kartu ini otomatis berubah."
+        description="Try clicking 'Connect' on the Navbar, and watch how the values on this card update automatically."
         preview={
           <div className="w-full max-w-md h-[340px]">
             <BalanceCard />

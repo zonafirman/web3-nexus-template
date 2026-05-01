@@ -16,7 +16,7 @@ const PortfolioChart = () => {
 
   return (
     <div className="p-6 md:p-8 rounded-[2rem] bg-zinc-900/40 border border-white/10 backdrop-blur-xl h-full flex flex-col relative overflow-hidden">
-      {/* ... (Sisa kode Portfolio Chart dengan SVG Animasi) ... */}
+      {/* ... (Rest of the Portfolio Chart code with SVG Animation) ... */}
     </div>
   );
 };
@@ -25,20 +25,22 @@ export default PortfolioChart;`;
 export default function ChartDocs() {
   return (
     <div className="pt-10 pb-20">
-      <div className="mb-12">
+      
+      {/* Header Section */}
+      <header className="mb-12">
         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">
           Portfolio Chart
         </h1>
         <p className="text-zinc-400 text-lg max-w-2xl leading-relaxed">
-          Grafik performa portofolio yang dibangun 100% menggunakan SVG murni dan Framer Motion. Mengapa? Agar aplikasi Web3 Anda terbebas dari <i>library</i> grafik eksternal yang berat seperti Chart.js.
+          A portfolio performance chart built 100% using pure SVG and Framer Motion. Why? To keep your Web3 application free from heavy external charting libraries like Chart.js.
         </p>
-      </div>
+      </header>
 
       <hr className="border-white/5 mb-16" />
 
       <ComponentPreview 
         title="SVG Animated Chart"
-        description="Klik pada pilihan waktu (1D, 1W, 1M, All) untuk melihat bagaimana garis grafik dirender ulang dengan animasi yang sangat mulus."
+        description="Click on the timeframes (1D, 1W, 1M, All) to see how the graph line is re-rendered with buttery smooth animations."
         preview={
           <div className="w-full max-w-2xl h-[340px]">
             <PortfolioChart />

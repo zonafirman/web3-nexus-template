@@ -5,11 +5,11 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, Sparkles, Terminal, Copy, Check, ExternalLink, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
-// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+// --- IMPORT FROM GLOBAL ANIMATION HUB ---
 import { fadeUpItem, fadeIn, popIn3D, blinkCursor } from '@/lib/animations';
 
 // ==========================================
-// 1. DATA STATIS & KONFIGURASI
+// 1. STATIC DATA & CONFIGURATION
 // ==========================================
 const STORE_LINK = "https://yourstore.gumroad.com/l/nexus-ui-pro";
 const CLONE_COMMAND = "npx create-next-app -e https://github.com/zonafirman/web3-nexus-template";
@@ -38,14 +38,17 @@ const highlightSyntax = (line: string) => {
   };
 };
 
+const SPRING_CONFIG = { stiffness: 150, damping: 20 };
+const CLONE_BTN_BASE = "flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.15)] border";
+
 // ==========================================
-// 2. KOMPONEN UTAMA HERO
+// 2. MAIN HERO COMPONENT
 // ==========================================
 const Hero = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [typedCode, setTypedCode] = useState("");
   
-  // --- Efek Mengetik (Typewriter) ---
+  // --- Typewriter Effect ---
   useEffect(() => {
     let i = 0;
     const typingInterval = setInterval(() => {
@@ -59,7 +62,7 @@ const Hero = () => {
     return () => clearInterval(typingInterval);
   }, []);
 
-  // --- Handler Tombol Clone ---
+  // --- Clone Button Handler ---
   const handleClone = () => {
     navigator.clipboard.writeText(CLONE_COMMAND);
     setIsCopied(true);
@@ -70,12 +73,12 @@ const Hero = () => {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  // --- Fisika 3D Untuk Kotak IDE ---
+  // --- 3D Physics for IDE Mockup ---
   const ideRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
-  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
+  const mouseXSpring = useSpring(x, SPRING_CONFIG);
+  const mouseYSpring = useSpring(y, SPRING_CONFIG);
   
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [10, -10]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-10, 10]);
@@ -89,8 +92,7 @@ const Hero = () => {
 
   const handleMouseLeave = () => { x.set(0); y.set(0); };
 
-  // --- Ekstraksi Kelas CSS Tailwind ---
-  const cloneBtnBase = "flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-bold transition-all active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.15)] border";
+  // --- Dynamic Tailwind CSS Class ---
   const cloneBtnState = isCopied 
     ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]" 
     : "bg-white text-zinc-950 border-white hover:bg-zinc-200 hover:scale-105";
@@ -98,12 +100,12 @@ const Hero = () => {
   return (
     <section className="relative min-h-[95vh] flex items-center justify-center pt-32 pb-20 overflow-hidden">
       
-      {/* Background Grid Retro-Futuristik */}
+      {/* Retro-Futuristic Grid Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:64px_64px] pointer-events-none -z-20 mask-image:linear-gradient(to_bottom,black,transparent)]" style={{ WebkitMaskImage: 'radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 100%)' }}></div>
 
       <div className="max-w-7xl mx-auto px-6 w-full flex flex-col lg:flex-row items-center gap-16 relative z-10">
         
-        {/* KOLOM KIRI: Value Proposition & CTA */}
+        {/* LEFT COLUMN: Value Proposition & CTA */}
         <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left z-10">
           
           <motion.div 
@@ -136,7 +138,7 @@ const Hero = () => {
             className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-8"
           >
             {/* Action 1: Clone Repo */}
-            <button onClick={handleClone} className={`${cloneBtnBase} ${cloneBtnState}`}>
+            <button onClick={handleClone} className={`${CLONE_BTN_BASE} ${cloneBtnState}`}>
               {isCopied ? <><Check size={18} /> Copied!</> : <><Terminal size={18} /> Clone Repository</>}
             </button>
 
@@ -178,7 +180,7 @@ const Hero = () => {
 
         </div>
 
-        {/* KOLOM KANAN: Interactive 3D IDE Mockup */}
+        {/* RIGHT COLUMN: Interactive 3D IDE Mockup */}
         <motion.div 
           variants={popIn3D} custom={0.4} initial="hidden" animate="visible"
           className="flex-1 w-full max-w-lg lg:max-w-full relative perspective-1000"

@@ -5,11 +5,11 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from
 import { Copy, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
-// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+// --- IMPORT FROM GLOBAL ANIMATION HUB ---
 import { fadeUp, slideFromRight, terminalLine, terminalLineUp, terminalLoadingBar } from '@/lib/animations';
 
 // ==========================================
-// 1. DATA STATIS & KONFIGURASI
+// 1. STATIC DATA & CONFIGURATION
 // ==========================================
 const PACKAGE_MANAGERS = ['npm', 'yarn', 'pnpm', 'bun'];
 
@@ -20,15 +20,17 @@ const COMMANDS: Record<string, string> = {
   bun: "bun create next-app -e https://github.com/zonafirman/web3-nexus-template my-dapp",
 };
 
+const SPRING_CONFIG = { stiffness: 150, damping: 20 };
+
 // ==========================================
-// 2. KOMPONEN UTAMA
+// 2. MAIN COMPONENT
 // ==========================================
 const Integration = () => {
   const [activeTab, setActiveTab] = useState('npm');
   const [isCopied, setIsCopied] = useState(false);
   const [step, setStep] = useState(0);
 
-  // --- Efek Simulasi Terminal ---
+  // --- Terminal Simulation Effect ---
   useEffect(() => {
     const timer1 = setTimeout(() => setStep(1), 600);
     const timer2 = setTimeout(() => setStep(2), 1800);
@@ -47,12 +49,12 @@ const Integration = () => {
     setStep(0);
   };
 
-  // --- Fisika 3D Untuk Kotak Terminal ---
+  // --- 3D Physics for Terminal Box ---
   const terminalRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
-  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
+  const mouseXSpring = useSpring(x, SPRING_CONFIG);
+  const mouseYSpring = useSpring(y, SPRING_CONFIG);
   
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [8, -8]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-8, 8]);
@@ -66,7 +68,7 @@ const Integration = () => {
 
   const handleMouseLeave = () => { x.set(0); y.set(0); };
 
-  // --- Utility Render Teks ---
+  // --- Text Render Utility ---
   const renderFormattedCommand = () => {
     return {
       __html: COMMANDS[activeTab]
@@ -78,13 +80,13 @@ const Integration = () => {
 
   return (
     <section className="py-32 relative z-10 overflow-hidden">
-      {/* Latar Belakang */}
+      {/* Background */}
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-150 h-150 bg-blue-600/5 blur-[120px] pointer-events-none -z-10 rounded-full"></div>
 
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col lg:flex-row items-center gap-16">
           
-          {/* KOLOM KIRI: Teks & Tombol */}
+          {/* LEFT COLUMN: Text & Buttons */}
           <div className="flex-1 text-center lg:text-left z-10">
             <motion.h2 
               variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
@@ -123,7 +125,7 @@ const Integration = () => {
             </motion.div>
           </div>
 
-          {/* KOLOM KANAN: Terminal Multi-Tab 3D */}
+          {/* RIGHT COLUMN: 3D Multi-Tab Terminal */}
           <motion.div 
             variants={slideFromRight} initial="hidden" whileInView="visible" viewport={{ once: true }}
             className="flex-1 w-full relative group perspective-1000"
@@ -137,7 +139,7 @@ const Integration = () => {
               style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
               className="relative rounded-3xl bg-[#0d1117]/90 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.6)] backdrop-blur-2xl overflow-hidden transition-colors duration-500 hover:border-cyan-500/40"
             >
-              {/* Header Terminal */}
+              {/* Terminal Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-3 bg-black/40 border-b border-white/5 gap-3" style={{ transform: "translateZ(10px)" }}>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-inner"></div>
@@ -158,7 +160,7 @@ const Integration = () => {
                 </div>
               </div>
 
-              {/* Body Terminal */}
+              {/* Terminal Body */}
               <div className="p-8 font-mono text-sm min-h-65" style={{ transform: "translateZ(30px)" }}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="text-cyan-400 break-all leading-relaxed">

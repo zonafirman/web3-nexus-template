@@ -10,11 +10,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useWeb3Store } from '@/store/useWeb3Store';
 
-// --- IMPORT DARI PUSAT ANIMASI GLOBAL ---
+// --- IMPORT FROM GLOBAL ANIMATION HUB ---
 import { slideInItem, fadeUp } from '@/lib/animations';
 
 // ==========================================
-// 1. DATA STATIS & KONFIGURASI MENU
+// 1. STATIC DATA & MENU CONFIGURATION
 // ==========================================
 const MENU_ITEMS = [
   { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
@@ -24,8 +24,12 @@ const MENU_ITEMS = [
   { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
 ];
 
+// --- Dynamic CSS classes for navigation links ---
+const ACTIVE_NAV_CLASS = "bg-cyan-500/10 text-cyan-400 border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]";
+const INACTIVE_NAV_CLASS = "text-zinc-400 hover:bg-white/5 hover:text-white border-transparent";
+
 // ==========================================
-// 2. KOMPONEN UTAMA SIDEBAR
+// 2. MAIN SIDEBAR COMPONENT
 // ==========================================
 const DashboardSidebar = () => {
   const pathname = usePathname();
@@ -53,22 +57,18 @@ const DashboardSidebar = () => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
 
-          // Ekstraksi kelas CSS agar lebih mudah dibaca
-          const activeClass = "bg-cyan-500/10 text-cyan-400 border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.1)]";
-          const inactiveClass = "text-zinc-400 hover:bg-white/5 hover:text-white border-transparent";
-
           return (
             <motion.div key={item.label} variants={slideInItem} custom={0.1 * i}>
               <Link
                 href={item.href}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 border group ${isActive ? activeClass : inactiveClass}`}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 border group ${isActive ? ACTIVE_NAV_CLASS : INACTIVE_NAV_CLASS}`}
               >
                 <Icon size={20} className={isActive ? "animate-pulse" : "group-hover:scale-110 transition-transform"} />
                 <span className="font-semibold">{item.label}</span>
                 
                 {isActive && (
                   <motion.div 
-                    layoutId="active-sidebar-dot" // Efek transisi mulus berpindah tab
+                    layoutId="active-sidebar-dot" // Smooth transition effect when switching tabs
                     className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)]"
                   />
                 )}

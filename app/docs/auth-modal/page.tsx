@@ -11,13 +11,13 @@ import { Wallet, X, Mail, Github, ChevronRight, Loader2, Fingerprint } from 'luc
 import { useWeb3Store } from '@/store/useWeb3Store';
 
 const AuthModal = ({ isOpen, onClose }) => {
-  // ... (Logika delay simulasi koneksi Wallet) ...
+  // ... (Simulated wallet connection delay logic) ...
   
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
-           {/* ... (Struktur Account Abstraction Modal) ... */}
+           {/* ... (Account Abstraction Modal Structure) ... */}
         </div>
       )}
     </AnimatePresence>
@@ -30,20 +30,23 @@ export default function AuthModalDocs() {
 
   return (
     <div className="pt-10 pb-20">
-      <div className="mb-12">
+      
+      {/* Header Section */}
+      <header className="mb-12">
         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">
           Auth Modal
         </h1>
         <p className="text-zinc-400 text-lg max-w-2xl leading-relaxed">
-          Modal autentikasi Web3 berstandar 2026. Memprioritaskan <b>Account Abstraction</b> (Login via Email/Sosial) di bagian atas, dan Browser Wallet tradisional di bagian bawah.
+          A 2026-standard Web3 authentication modal. Prioritizes <b>Account Abstraction</b> (Email/Social Login) at the top, with traditional Browser Wallets at the bottom.
         </p>
-      </div>
+      </header>
 
       <hr className="border-white/5 mb-16" />
 
+      {/* Component Preview Area */}
       <ComponentPreview 
         title="Interactive Auth Modal"
-        description="Klik tombol di bawah untuk memunculkan Modal. Cobalah klik 'Browser Wallet' untuk melihat simulasi efek loading koneksinya."
+        description="Click the button below to trigger the Modal. Try clicking 'Browser Wallet' to see the simulated connection loading effect."
         preview={
           <div className="w-full h-[300px] flex items-center justify-center relative">
             <button 
@@ -53,7 +56,7 @@ export default function AuthModalDocs() {
               Open Auth Modal
             </button>
             
-            {/* Memanggil Komponen Auth Modal Asli */}
+            {/* Render the actual Auth Modal component */}
             <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
           </div>
         }

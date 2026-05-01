@@ -6,7 +6,7 @@ import { Check, X, Zap, Shield, Crown } from 'lucide-react';
 import { fadeUp, slideFromLeft, slideFromRight } from '@/lib/animations';
 
 // ==========================================
-// 1. DATA STATIS & KONFIGURASI
+// 1. STATIC DATA & CONFIGURATION
 // ==========================================
 const LITE_FEATURES = [
   'Next.js 15 & Tailwind v4 Setup', 
@@ -33,14 +33,14 @@ const PRO_FEATURES = [
 ];
 
 // ==========================================
-// 2. KOMPONEN UTAMA
+// 2. MAIN COMPONENT
 // ==========================================
 const Pricing = () => {
   return (
     <section className="py-24 relative z-10" id="pricing">
       <div className="max-w-7xl mx-auto px-6">
         
-        {/* HEADER PRICING */}
+        {/* PRICING HEADER */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <motion.div 
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }}
@@ -82,13 +82,13 @@ const Pricing = () => {
             </div>
 
             <ul className="space-y-4 mb-10">
-              {LITE_FEATURES.map((feature, i) => (
-                <li key={`lite-inc-${i}`} className="flex items-center gap-3 text-sm font-medium text-zinc-300">
+              {LITE_FEATURES.map((feature) => (
+                <li key={feature} className="flex items-center gap-3 text-sm font-medium text-zinc-300">
                   <Check size={18} className="text-cyan-500 flex-shrink-0" /> {feature}
                 </li>
               ))}
-              {LITE_MISSING.map((feature, i) => (
-                <li key={`lite-exc-${i}`} className="flex items-center gap-3 text-sm font-medium text-zinc-600">
+              {LITE_MISSING.map((feature) => (
+                <li key={feature} className="flex items-center gap-3 text-sm font-medium text-zinc-600">
                   <X size={18} className="flex-shrink-0" /> {feature}
                 </li>
               ))}
@@ -127,8 +127,8 @@ const Pricing = () => {
               <li className="flex items-center gap-3 text-sm font-bold text-white">
                 <Check size={18} className="text-cyan-500 flex-shrink-0" /> Everything in Lite, plus:
               </li>
-              {PRO_FEATURES.map((feature, i) => (
-                <li key={`pro-${i}`} className="flex items-center gap-3 text-sm font-medium text-zinc-300">
+              {PRO_FEATURES.map((feature) => (
+                <li key={feature} className="flex items-center gap-3 text-sm font-medium text-zinc-300">
                   <Check size={18} className="text-emerald-400 flex-shrink-0" /> {feature}
                 </li>
               ))}

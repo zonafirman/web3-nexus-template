@@ -9,16 +9,16 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    // Tambahan overflow-hidden agar glow tidak bocor keluar layar
-    <div className="flex min-h-screen bg-zinc-950 text-zinc-200 selection:bg-cyan-500/30 overflow-hidden font-sans antialiased">
+    // overflow-hidden on the root prevents the large glow effects from leaking
+    <div className="flex min-h-screen bg-zinc-950 text-zinc-200 selection:bg-cyan-500/30 overflow-hidden">
       
-      {/* Sidebar Desktop (Persisten) */}
+      {/* Persistent Desktop Sidebar */}
       <DashboardSidebar />
       
-      {/* Area Konten Dinamis */}
+      {/* Dynamic Content Area */}
       <main className="flex-1 h-screen overflow-y-auto overflow-x-hidden relative scroll-smooth">
         
-        {/* MOBILE HEADER (Penyelamat UX di HP) */}
+        {/* Mobile Header (for better UX on small screens) */}
         <div className="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-7 h-7 bg-cyan-500 rounded-lg flex items-center justify-center">
@@ -31,11 +31,11 @@ export default function DashboardLayout({
           </button>
         </div>
 
-        {/* DUAL GLOW BACKGROUND (Menciptakan kedalaman 3D) */}
+        {/* DUAL GLOW BACKGROUND (Creates a 3D depth effect) */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-cyan-500/5 blur-[120px] pointer-events-none -z-10 rounded-full"></div>
         <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-blue-600/5 blur-[120px] pointer-events-none -z-10 rounded-full"></div>
         
-        {/* Render Konten Halaman (Z-10 agar selalu di atas glow) */}
+        {/* Render Page Content (z-10 to keep it above the glow) */}
         <div className="relative z-10">
           {children}
         </div>

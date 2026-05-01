@@ -5,7 +5,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Terminal, Layout, Blocks, Home, Compass } from 'lucide-react';
 
-const sidebarItems = [
+// ==========================================
+// 1. STATIC CONFIGURATION (SIDEBAR NAVIGATION)
+// ==========================================
+const SIDEBAR_ITEMS = [
   {
     category: "Getting Started",
     icon: Terminal,
@@ -42,16 +45,19 @@ const sidebarItems = [
   }
 ];
 
+// ==========================================
+// 2. MAIN LAYOUT COMPONENT
+// ==========================================
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex pt-24">
-      {/* Sidebar Desktop */}
+      {/* Desktop Sidebar */}
       <aside className="w-72 hidden lg:block border-r border-white/5 h-[calc(100vh-6rem)] sticky top-24 overflow-y-auto pl-8 pr-6 pb-20 scroll-smooth">
         <div className="space-y-10">
-          {sidebarItems.map((section, idx) => (
-            <div key={idx}>
+          {SIDEBAR_ITEMS.map((section) => (
+            <div key={section.category}>
               <h4 className="flex items-center gap-2 text-sm font-bold text-white mb-4 uppercase tracking-widest">
                 <section.icon size={16} className="text-cyan-500" /> {section.category}
               </h4>
@@ -78,7 +84,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
         </div>
       </aside>
 
-      {/* Area Konten Docs */}
+      {/* Docs Content Area */}
       <main className="flex-1 max-w-5xl px-6 lg:px-12 pb-32">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 blur-[120px] pointer-events-none -z-10 rounded-full"></div>
         {children}
